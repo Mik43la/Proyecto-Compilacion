@@ -1,0 +1,11 @@
+grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
+
+generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
+
+Program: (statements += Statement)* ;
+
+Statement:(Simple '\n'| Compound)  ;//;
+BooleanLiteral: ( | false);
+//BooleanLiteral returns Expression: {BooleanLiteral}value?= 'true' | 'false';
+//acaso no hay booleans aca??????
+Expresion: INT | STRING | value?= true |;
