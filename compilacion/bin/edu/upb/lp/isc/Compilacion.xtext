@@ -2,10 +2,51 @@ grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
-Program: (statements += Statement)* ;
+Program: 
+	(statements += Statement)*
+	
+;
 
-Statement:(Simple '\n'| Compound)  ;//;
-BooleanLiteral: ( | false);
+Statement:
+	(simple = Simple '\n' | compound = Compound)
+;
+
+Compound:
+	('class' name=ID ':' '\n' classBLock = ClassBLock | 'def' name=ID '(' (atibutos=ID Optctc (',')+)* ')' ':' '\n' Block | 
+		'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
+	'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
+		
+;
+
+Simple:
+	(Lvalue == Expr | Expr | 'let' name=ID Optctc
+	| 'return' Expr | Simple ';' Simple)
+;
+
+Lvalue:
+	(value = ID | Expr '.' value = ID | Expr '[' Expr ']')
+;
+
+Expr:
+	(INT | STRING | BOOL | 'pass' | 'None' | Lvalue | Expr 'if' Expr 'else' Expr | 
+		Expr ('(' Expr ')' (',')+)* | structName=ID '{' ('(' Expr ')' (',')+)* '}' | 
+		'[' ('(' Expr ')' (',')+)* ']' | '[' Expr ';' Expr ']' | '[' Expr 'for' var = ID 'in' Expr ('if' Expr)? ']'
+		//no se como implementar binop ni unop
+		//no se que estoy haciendo
+	)
+;
+
+BOOL:
+	'True' | 'False'
+;
+
+Block:
+	(Simple '\n' |'	' (Statement)+)//DEDENT?????
+;
+ClassBLock:
+	'	' (FieldDef)* //me perdi :C
+;
+//BooleanLiteral: ( | false);
 //BooleanLiteral returns Expression: {BooleanLiteral}value?= 'true' | 'false';
 //acaso no hay booleans aca??????
-Expresion: INT | STRING | value?= true |;
+//Expresion: INT | STRING | value?= true |;
