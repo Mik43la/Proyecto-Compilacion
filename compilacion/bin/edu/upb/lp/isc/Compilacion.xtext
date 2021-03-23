@@ -2,51 +2,86 @@ grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
-Program: 
-	(statements += Statement)*
+//cond define else keywords
+Programa: 
+	(declaraciones += Declaraciones)*
 	
 ;
 
-Statement:
-	(simple = Simple '\n' | compound = Compound)
-;
-
-Compound:
-	('class' name=ID ':' '\n' classBLock = ClassBLock | 'def' name=ID '(' (atibutos=ID Optctc (',')+)* ')' ':' '\n' Block | 
-		'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
-	'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
-		
+Declaraciones:
+	(simple = Simple | compuesta = Compuesta)
 ;
 
 Simple:
-	(Lvalue == Expr | Expr | 'let' name=ID Optctc
-	| 'return' Expr | Simple ';' Simple)
+	(Expr )
 ;
 
-Lvalue:
-	(value = ID | Expr '.' value = ID | Expr '[' Expr ']')
+Compuesta:
+	(Expr)
+//	('class' name=ID ':' '\n' classBLock = ClassBLock | 'def' name=ID '(' (atibutos=ID Optctc (',')+)* ')' ':' '\n' Block | 
+	//	'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
+	//'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
+		
 ;
 
 Expr:
-	(INT | STRING | BOOL | 'pass' | 'None' | Lvalue | Expr 'if' Expr 'else' Expr | 
-		Expr ('(' Expr ')' (',')+)* | structName=ID '{' ('(' Expr ')' (',')+)* '}' | 
-		'[' ('(' Expr ')' (',')+)* ']' | '[' Expr ';' Expr ']' | '[' Expr 'for' var = ID 'in' Expr ('if' Expr)? ']'
-		//no se como implementar binop ni unop
-		//no se que estoy haciendo
-	)
+	(DataType | Aritmetica | Variables | Estructuras)
 ;
 
+DataType:
+	(INT | STRING | BOOL)
+;
+
+Aritmetica:
+	'(' Operacion INT INT (INT)* ')'
+;
+
+Operacion:
+	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+;
+
+Variables:
+	'(' 'define' nombreaVar=ID DataType ')'
+;
+
+//TODO let??
 BOOL:
-	'True' | 'False'
+	('#T' | '#F' | '#t' | '#f' | '#true' | '#True' | '#false' | '#False')
 ;
 
-Block:
-	(Simple '\n' |'	' (Statement)+)//DEDENT?????
+Estructuras:
+	Struct | Define | If
 ;
-ClassBLock:
-	'	' (FieldDef)* //me perdi :C
+
+Struct:
+	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
 ;
-//BooleanLiteral: ( | false);
-//BooleanLiteral returns Expression: {BooleanLiteral}value?= 'true' | 'false';
-//acaso no hay booleans aca??????
-//Expresion: INT | STRING | value?= true |;
+
+
+
+Define:
+	'(' 'define' name=ID 
+		'(' structName=[Struct] (atributos+=[Atributo])* ')'//(define (hello-world2) "Hello World")
+;
+
+Atributo:
+	(atributoName=ID | Funcion)
+;
+
+Funcion:
+	'(' ('lambda') "("")" DataType ")"
+;
+
+Equal:
+	'(' '=' dat1=DataType dat2=DataType')'
+;
+
+If:
+	'if' (Equal | BOOL)
+		Bloque
+		
+;
+
+Bloque:
+	'TODO'//TODO aqui deberia ir Simple
+;
