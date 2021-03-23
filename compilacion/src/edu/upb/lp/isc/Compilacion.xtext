@@ -2,10 +2,102 @@ grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
-Program: (statements += Statement)* ;
+//cond define else keywords
+Programa: 
+   '#lang' 'racket'
+	(declaraciones += Declaraciones)*
+	
+;
+Declaraciones:
+	(simple = Simple | compuesta = Compuesta)
+;
 
-Statement:(Simple '\n'| Compound)  ;//;
-BooleanLiteral: ( | false);
-//BooleanLiteral returns Expression: {BooleanLiteral}value?= 'true' | 'false';
-//acaso no hay booleans aca??????
-Expresion: INT | STRING | value?= true |;
+Simple:
+	(Expr)
+;
+
+Compuesta:
+	(expr+=Expr)*	
+;
+Expr:
+	(DataType | Aritmetica | Variables | Estructuras)
+;
+
+Number: 
+	INT | Double //| Fractions
+;
+
+Double: 
+	INT'.'INT
+;
+DataType:
+	(INT | STRING | Bool | Double)
+;
+
+Aritmetica:
+	'(' Operacion INT INT (INT)* ')'
+;
+
+Operacion:
+	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+;
+Boolean_Op: 
+	('<' | '>=' | '>' | '<=' )
+;
+//TODO let??
+Bool:
+	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+;
+Variables:
+	( '(' 'define' nombreaVar=ID DataType ')') 
+;
+
+Estructuras:
+	Struct | Define | If
+;
+
+Struct:
+	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
+;
+
+List:
+	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+;
+Define: 
+	'(' 'define' name=ID 
+	'(' structName=[Struct] (atributos+=[Atributo])* ')'
+	')'//(define (hello-world2) "Hello World")
+;
+Atributo:
+	(atributoName=ID | Funcion)
+;
+Funcion:
+	'(' ( 'lambda') "(" ")" DataType ")"
+;
+
+Equal:
+	'(' ('=' | 'equal?' | 'eq?') dat1=DataType dat2=DataType')'
+;
+ 
+If:
+	//'if' (Equal | BOOL)
+		//Bloque
+	'if' '(' condition = ( Equal | Bool ) ')'	
+		then = Expr
+		(=> 'else' else = Expr)?
+		
+;
+Bloque:
+	Simple //TODO aqui deberia ir Simple
+;
+//maybe not necessary
+Error: 
+	'error' STRING
+;
+Cond:
+	'(' 
+	('[''(' Boolean_Op Number Number')' '(' Error ')'']')+
+	'[''else' (STRING | Number | Aritmetica) ']'
+	')'
+;
+

@@ -4,32 +4,34 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
 //cond define else keywords
 Programa: 
+   '#lang' 'racket'
 	(declaraciones += Declaraciones)*
 	
 ;
-
 Declaraciones:
 	(simple = Simple | compuesta = Compuesta)
 ;
 
 Simple:
-	(Expr )
+	(Expr)
 ;
 
 Compuesta:
-	(Expr)
-//	('class' name=ID ':' '\n' classBLock = ClassBLock | 'def' name=ID '(' (atibutos=ID Optctc (',')+)* ')' ':' '\n' Block | 
-	//	'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
-	//'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
-		
+	(expr+=Expr)*	
 ;
-
 Expr:
 	(DataType | Aritmetica | Variables | Estructuras)
 ;
 
+Number: 
+	INT | Double //| Fractions
+;
+
+Double: 
+	INT'.'INT
+;
 DataType:
-	(INT | STRING | BOOL)
+	(INT | STRING | Bool | Double)
 ;
 
 Aritmetica:
@@ -39,14 +41,15 @@ Aritmetica:
 Operacion:
 	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
-
-Variables:
-	'(' 'define' nombreaVar=ID DataType ')'
+Boolean_Op: 
+	('<' | '>=' | '>' | '<=' )
 ;
-
 //TODO let??
-BOOL:
-	('#T' | '#F' | '#t' | '#f' | '#true' | '#True' | '#false' | '#False')
+Bool:
+	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+;
+Variables:
+	( '(' 'define' nombreaVar=ID DataType ')') 
 ;
 
 Estructuras:
@@ -57,31 +60,44 @@ Struct:
 	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
 ;
 
-
-
-Define:
-	'(' 'define' name=ID 
-		'(' structName=[Struct] (atributos+=[Atributo])* ')'//(define (hello-world2) "Hello World")
+List:
+	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
-
+Define: 
+	'(' 'define' name=ID 
+	'(' structName=[Struct] (atributos+=[Atributo])* ')'
+	')'//(define (hello-world2) "Hello World")
+;
 Atributo:
 	(atributoName=ID | Funcion)
 ;
-
 Funcion:
-	'(' ('lambda') "("")" DataType ")"
+	'(' ( 'lambda') "(" ")" DataType ")"
 ;
 
 Equal:
-	'(' '=' dat1=DataType dat2=DataType')'
+	'(' ('=' | 'equal?' | 'eq?') dat1=DataType dat2=DataType')'
 ;
-
+ 
 If:
-	'if' (Equal | BOOL)
-		Bloque
+	//'if' (Equal | BOOL)
+		//Bloque
+	'if' '(' condition = ( Equal | Bool ) ')'	
+		then = Expr
+		(=> 'else' else = Expr)?
 		
 ;
-
 Bloque:
-	'TODO'//TODO aqui deberia ir Simple
+	Simple //TODO aqui deberia ir Simple
 ;
+//maybe not necessary
+Error: 
+	'error' STRING
+;
+Cond:
+	'(' 
+	('[''(' Boolean_Op Number Number')' '(' Error ')'']')+
+	'[''else' (STRING | Number | Aritmetica) ']'
+	')'
+;
+
