@@ -89,7 +89,7 @@ Funcion:
 ;
 
 Equal:
-	'(' ('=' | 'equal?' | 'eq?') dat1=DataType dat2=DataType')'
+	'(' ('=' | 'equal?' | 'eq?') DataType DataType')'
 ;
  
 If:
