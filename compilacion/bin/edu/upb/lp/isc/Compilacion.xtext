@@ -1,45 +1,49 @@
 grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
-
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
 //cond define else keywords
 Programa: 
-   '#lang racket'
-	(declaraciones += Declaraciones)*
+ //  '#lang racket'
+	(declaraciones += Define)*
+	(ejecuciones += Ejecucion)*
 	
 ;
+
+Ejecucion:
+	'>' Expr
+;
+
 Declaraciones:
-	(simple = Simple | compuesta = Compuesta)
+	Simple 
 ;
 
 Simple:
 	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
 ;
 
-Compuesta:
-	Clase|Estructuras|Define
-;
-
 Expr:
 	(DataType | Aritmetica | Equal | Estructuras | Funcion)
 ;
 
-Clase:
-	//TODO inserte aqui como hacer clases
-	'clase' '....' '{' Bloque '}'
-;
+
 
 Number: 
 	INT | Double //| Fractions
 ;
 
-Double: 
-	INT'.'INT //se tendria solo poder poner dos decimales
-;
-DataType:
-	(INT | STRING | Bool | Double)
+Digit:
+	('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')
 ;
 
+Double: 
+	INT'.'Digit Digit //se tendria solo poder poner dos decimales
+;
+DataType:
+	(INT | STRING | Bool | Double | List)
+;
+IsDataType: 
+	('number?' | 'string?' | 'list?' ) DataType //????
+;
 Aritmetica:
 	'(' Operacion INT INT (INT)* ')'
 ;
@@ -48,7 +52,7 @@ Operacion:
 	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
 Boolean_Op: 
-	('<' | '>=' | '>' | '<=' )
+	('<' | '>=' | '>' | '<=' | '=')
 ;
 //TODO let??
 Bool:
@@ -59,57 +63,45 @@ Variables:
 ;
 
 Estructuras:
-	Struct | If | For | While  //TODO agregar for y while
+	 If   //TODO agregar for y while
 ;
 
-For:
-	'For' '...' Bloque//TODO
+IterableDataType:
+	STRING|List
 ;
-
-While:
-	'while' '...' Bloque//TODO
-;
-Struct:
-	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
-;
+	
 
 List:
+
 	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 Define: 
 	'(' 'define' name=ID 
-	'(' structName=[Struct] (atributos+=[Atributo])* ')'
-	')'//(define (hello-world2) "Hello World")
+	'('  (atributos+=[Atributo])* (Funcion)? ')'
+	')'//(define "Hello World" (hello-world2) )
 ;
 Atributo:
 	(atributoName=ID | Funcion)
 ;
 Funcion:
-	'(' ( 'lambda') "(" ")" DataType ")"
+	'(' ( 'lambda') "(" ")" DataType ")"//TODO
 ;
 
 Equal:
-	'(' ('=' | 'equal?' | 'eq?') DataType DataType')'
+	'(' (/*'=' |*/ 'equal?' | 'eq?') DataType DataType')'
 ;
- 
+
+BooleanExpression:
+	Boolean_Op expr1=Expr expr2=Expr
+;
 If:
-	//'if' (Equal | BOOL)
-		//Bloque
-	'if' '(' condition = ( Equal | Bool ) ')'	
+	
+	'if' '(' condition = BooleanExpression ')'	
 		then = Bloque
-		(=> 'else' else = Expr)?
+		(=> else = Bloque)?
 		
 ;
 Bloque:
 	Simple 
 ;
-//maybe not necessary MAYBEnot
-//Error: 
-//	'error' STRING
-//;
-//Cond:
-//	'(' 
-//	('[''(' Boolean_Op Number Number')' '(' Error ')'']')+
-//	'[''else' (STRING | Number | Aritmetica) ']'
-//	')'
-//;
+
