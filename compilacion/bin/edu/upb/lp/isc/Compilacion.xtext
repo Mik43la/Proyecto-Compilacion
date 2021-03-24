@@ -88,8 +88,8 @@ List:
 ;
 Define: 
 	'(' 'define' name=ID 
-	'(' structName=[Struct] (atributos+=[Atributo])* ')'
-	')'//(define (hello-world2) "Hello World")
+	'(' (structName=[Struct])* (atributos+=[Atributo])* (Funcion)? ')'
+	')'//(define "Hello World" (hello-world2) )
 ;
 Atributo:
 	(atributoName=ID | Funcion)
