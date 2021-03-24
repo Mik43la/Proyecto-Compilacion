@@ -4,6 +4,10 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
 //cond define else keywords
 Programa: 
+<<<<<<< Updated upstream
+=======
+   '#lang racket'
+>>>>>>> Stashed changes
 	(declaraciones += Declaraciones)*
 	
 ;
@@ -13,6 +17,7 @@ Declaraciones:
 ;
 
 Simple:
+<<<<<<< Updated upstream
 	(Expr )
 ;
 
@@ -22,12 +27,34 @@ Compuesta:
 	//	'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
 	//'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
 		
+=======
+	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
+;
+
+Compuesta:
+	Clase|Estructuras|Define
+>>>>>>> Stashed changes
 ;
 
 Expr:
-	(DataType | Aritmetica | Variables | Estructuras)
+	(DataType | Aritmetica | Equal | Estructuras | Funcion)
 ;
 
+Clase:
+	//TODO inserte aqui como hacer clases
+	'clase' '....' '{' Bloque '}'
+;
+
+<<<<<<< Updated upstream
+=======
+Number: 
+	INT | Double //| Fractions
+;
+
+Double: 
+	INT'.'INT //se tendria solo poder poner dos decimales
+;
+>>>>>>> Stashed changes
 DataType:
 	(INT | STRING | BOOL)
 ;
@@ -50,9 +77,16 @@ BOOL:
 ;
 
 Estructuras:
-	Struct | Define | If
+	Struct | If | For | While  //TODO agregar for y while
 ;
 
+For:
+	'For' '...' Bloque//TODO
+;
+
+While:
+	'while' '...' Bloque//TODO
+;
 Struct:
 	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
 ;
@@ -77,10 +111,33 @@ Equal:
 ;
 
 If:
+<<<<<<< Updated upstream
 	'if' (Equal | BOOL)
 		Bloque
 		
 ;
+=======
+	//'if' (Equal | BOOL)
+		//Bloque
+	'if' '(' condition = ( Equal | Bool ) ')'	
+		then = Bloque
+		(=> 'else' else = Expr)?
+		
+;
+Bloque:
+	Simple 
+;
+//maybe not necessary MAYBEnot
+//Error: 
+//	'error' STRING
+//;
+//Cond:
+//	'(' 
+//	('[''(' Boolean_Op Number Number')' '(' Error ')'']')+
+//	'[''else' (STRING | Number | Aritmetica) ']'
+//	')'
+//;
+>>>>>>> Stashed changes
 
 Bloque:
 	'TODO'//TODO aqui deberia ir Simple
