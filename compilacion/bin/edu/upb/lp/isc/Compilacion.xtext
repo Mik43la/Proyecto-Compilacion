@@ -8,21 +8,11 @@ Programa:
 	(declaraciones += Declaraciones)*
 	
 ;
-
 Declaraciones:
-	(simple = Simple | compuesta = Compuesta)
+	simple=SImple//(simple = Simple | compuesta = Compuesta)
 ;
 
 Simple:
-	(Expr )
-;
-
-Compuesta:
-	(Expr)
-//	('class' name=ID ':' '\n' classBLock = ClassBLock | 'def' name=ID '(' (atibutos=ID Optctc (',')+)* ')' ':' '\n' Block | 
-	//	'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
-	//'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
-		
 	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
 ;
 
@@ -47,7 +37,7 @@ Double:
 	INT'.'INT //se tendria solo poder poner dos decimales
 ;
 DataType:
-	(INT | STRING | BOOL)
+	(INT | STRING | Bool | Double)
 ;
 
 Aritmetica:
@@ -57,14 +47,15 @@ Aritmetica:
 Operacion:
 	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
-
-Variables:
-	'(' 'define' nombreaVar=ID DataType ')'
+Boolean_Op: 
+	('<' | '>=' | '>' | '<=' )
 ;
-
 //TODO let??
-BOOL:
-	('#T' | '#F' | '#t' | '#f' | '#true' | '#True' | '#false' | '#False')
+Bool:
+	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+;
+Variables:
+	( '(' 'define' nombreaVar=ID DataType ')') 
 ;
 
 Estructuras:
@@ -82,26 +73,32 @@ Struct:
 	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
 ;
 
-
-
-Define:
-	'(' 'define' name=ID 
-		'(' structName=[Struct] (atributos+=[Atributo])* ')'//(define (hello-world2) "Hello World")
+List:
+	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
-
+Define: 
+	'(' 'define' name=ID 
+	'(' structName=[Struct] (atributos+=[Atributo])* ')'
+	')'//(define (hello-world2) "Hello World")
+;
 Atributo:
 	(atributoName=ID | Funcion)
 ;
-
 Funcion:
-	'(' ('lambda') "("")" DataType ")"
+	'(' ( 'lambda') "(" ")" DataType ")"
 ;
 
 Equal:
-	'(' '=' dat1=DataType dat2=DataType')'
+	'(' ('=' | 'equal?' | 'eq?') dat1=DataType dat2=DataType')'
 ;
-
+ 
 If:
+	//'if' (Equal | BOOL)
+		//Bloque
+	'if' '(' condition = ( Equal | Bool ) ')'	
+		then = Bloque
+		(=> 'else' else = Expr)?
+		
 ;
 Bloque:
 	Simple 
@@ -116,7 +113,3 @@ Bloque:
 //	'[''else' (STRING | Number | Aritmetica) ']'
 //	')'
 //;
-
-Bloque:
-	'TODO'//TODO aqui deberia ir Simple
-;
