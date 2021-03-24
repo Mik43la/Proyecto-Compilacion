@@ -4,10 +4,7 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 
 //cond define else keywords
 Programa: 
-<<<<<<< Updated upstream
-=======
    '#lang racket'
->>>>>>> Stashed changes
 	(declaraciones += Declaraciones)*
 	
 ;
@@ -17,7 +14,6 @@ Declaraciones:
 ;
 
 Simple:
-<<<<<<< Updated upstream
 	(Expr )
 ;
 
@@ -27,13 +23,11 @@ Compuesta:
 	//	'if' Expr ":" Block ('elif' Expr ';' Block)* ('else' ':' Block)?) |
 	//'for' name=ID 'in' Expr ':' Block | 'struct' name=ID ':' structBlock=StructBLock | 'while' Expr ':' Block)
 		
-=======
 	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
 ;
 
 Compuesta:
 	Clase|Estructuras|Define
->>>>>>> Stashed changes
 ;
 
 Expr:
@@ -45,8 +39,6 @@ Clase:
 	'clase' '....' '{' Bloque '}'
 ;
 
-<<<<<<< Updated upstream
-=======
 Number: 
 	INT | Double //| Fractions
 ;
@@ -54,7 +46,6 @@ Number:
 Double: 
 	INT'.'INT //se tendria solo poder poner dos decimales
 ;
->>>>>>> Stashed changes
 DataType:
 	(INT | STRING | BOOL)
 ;
@@ -111,18 +102,6 @@ Equal:
 ;
 
 If:
-<<<<<<< Updated upstream
-	'if' (Equal | BOOL)
-		Bloque
-		
-;
-=======
-	//'if' (Equal | BOOL)
-		//Bloque
-	'if' '(' condition = ( Equal | Bool ) ')'	
-		then = Bloque
-		(=> 'else' else = Expr)?
-		
 ;
 Bloque:
 	Simple 
@@ -137,7 +116,6 @@ Bloque:
 //	'[''else' (STRING | Number | Aritmetica) ']'
 //	')'
 //;
->>>>>>> Stashed changes
 
 Bloque:
 	'TODO'//TODO aqui deberia ir Simple
