@@ -9,7 +9,7 @@ Programa:
 	
 ;
 Declaraciones:
-	simple=SImple//(simple = Simple | compuesta = Compuesta)
+	(simple = Simple | compuesta = Compuesta)
 ;
 
 Simple:
