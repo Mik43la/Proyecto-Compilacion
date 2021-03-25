@@ -4,13 +4,13 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 //cond define else keywords
 Programa: 
  //  '#lang racket'
-	(declaraciones += Define)*
+	(declaraciones += Declaraciones)*
 	(ejecuciones += Ejecucion)*
 	
 ;
 
 Ejecucion:
-	'>' Expr
+	'>' Expr//revisar
 ;
 
 Declaraciones:
@@ -18,11 +18,11 @@ Declaraciones:
 ;
 
 Simple:
-	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
+	((expr+=Expr)+ | (estructura+=Estructuras)*)
 ;
 
 Expr:
-	(DataType | Aritmetica | Equal | Estructuras | Funcion)
+	(DataType | Aritmetica | Equal  | Define | FuncionSimplificada)
 ;
 
 
@@ -36,72 +36,84 @@ Digit:
 ;
 
 Double: 
-	INT'.'Digit Digit //se tendria solo poder poner dos decimales
+	INT'.'Digit Digit 
 ;
 DataType:
 	(INT | STRING | Bool | Double | List)
 ;
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType //????
+	('number?' | 'string?' | 'list?' ) DataType //???? no se
 ;
 Aritmetica:
-	'(' Operacion INT INT (INT)* ')'
+	'(' Operacion INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos
+		//el problema es que expt quotient remainder solo aceptan dos INT
+		//pd si quieres agregar double en ves de Int es number
 ;
 
 Operacion:
-	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar
 ;
+
+Variables:
+( '(' 'define' nombreaVar=ID DataType ')')  //supercheck
+;
+
 Boolean_Op: 
 	('<' | '>=' | '>' | '<=' | '=')
 ;
-//TODO let??
+
 Bool:
 	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
 ;
-Variables:
-	( '(' 'define' nombreaVar=ID DataType ')') 
-;
 
 Estructuras:
-	 If   //TODO agregar for y while
+	 If   //por ver
 ;
 
 IterableDataType:
-	STRING|List
+	STRING|List//revisar donde se usa??
 ;
 	
 
 List:
 
-	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' //check ver lo del number
 ;
-Define: 
+
+Define: //revisar
 	'(' 'define' name=ID 
 	'('  (atributos+=[Atributo])* (Funcion)? ')'
 	')'//(define "Hello World" (hello-world2) )
 ;
-Atributo:
+
+Atributo:// aun por ver
 	(atributoName=ID | Funcion)
 ;
-Funcion:
+
+Funcion://hacer el simplificado
 	'(' ( 'lambda') "(" ")" DataType ")"//TODO
 ;
 
-Equal:
-	'(' (/*'=' |*/ 'equal?' | 'eq?') DataType DataType')'
+FuncionSimplificada:
+	'(' 'define' '(' name=ID ')' DataType ')'
 ;
 
-BooleanExpression:
-	Boolean_Op expr1=Expr expr2=Expr
+Equal:
+	'(' ('=' | 'equal?' | 'eq?') DataType DataType')'//revisar equal de listas co
+		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
-If:
+
+//BooleanExpression:
+//	Boolean_Op expr1=Expr expr2=Expr  //no se para que es esto
+//;
+
+If://check
 	
-	'if' '(' condition = BooleanExpression ')'	
-		then = Bloque
-		(=> else = Bloque)?
+	'(' 'if' '(' condition = Equal ')'	
+		('(')? then = Bloque (')')?
+		'(' else = Bloque ')' ')'
 		
 ;
 Bloque:
 	Simple 
 ;
-
