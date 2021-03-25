@@ -5,123 +5,97 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 Programa: 
  //  '#lang racket'
 	(declaraciones += Declaraciones)*
+	(ejecuciones += Ejecucion)*
 	
 ;
+
+Ejecucion:
+	'>' Expr
+;
+
 Declaraciones:
-	(simple = Simple | compuesta = Compuesta)
+	Simple 
 ;
 
 Simple:
-	((expr+=Expr)+ | 'pass' | 'break' | 'continue')
-;
-
-Compuesta:
-	Clase|Estructuras|Define
+	((expr+=Expr)+ | (estructura+=Estructuras)*)
 ;
 
 Expr:
-	(DataType | Aritmetica | Equal | Estructuras | Funcion)
+	(DataType | Aritmetica | Equal  | Variables | FuncionSimplificada)
 ;
 
-Clase:
-	//TODO inserte aqui como hacer clases	Feisimo
-	'clase' '....' '{' Bloque '}'
-;
-
-Number: 
-	INT | Double //| Fractions
-;
-
-Digit:
-	('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')
-;
-
-Double: 
-	INT'.'Digit Digit //se tendria solo poder poner dos decimales
-;
 DataType:
-	(INT | STRING | Bool | Double | List)
+	(INT | STRING | Bool | List)
 ;
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType //????
+	('number?' | 'string?' | 'list?' ) DataType //???? no se
 ;
 Aritmetica:
-	'(' Operacion INT INT (INT)* ')'
+	'(' Operadores INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+		//el problema es que expt quotient remainder solo aceptan dos INT
+		//pd si quieres agregar double en ves de Int es number
 ;
 
-Operacion:
-	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+Operadores:
+	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
 ;
+
+Variables:
+( '(' 'define' nombreaVar=ID DataType ')')  //supercheck
+;
+
 Boolean_Op: 
-	('<' | '>=' | '>' | '<=' | '=')
+	('<' | '>=' | '>' | '<=' )
 ;
-//TODO let??
+
 Bool:
 	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
 ;
-Variables:
-	( '(' 'define' nombreaVar=ID DataType ')') 
-;
 
 Estructuras:
-	Struct | If | For | While  //TODO agregar for y while
-;
-
-IterableDataType:
-	STRING|List
-;
-For:
-	'(''For' '[' indexName=ID IterableDataType ']' 
-	bloque= Bloque
-	')'
-;
-
-While:
-	'while' '...' Bloque//TODO
-;
-Struct:
-	"(" "struct" name=ID "(" (atributo += Atributo)* ")" ")"
-;
+	 If   //por ver
+;	
 
 List:
-	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+
+	'(''list' ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
-Define: 
-	'(' 'define' name=ID 
-	'(' (structName=[Struct])* (atributos+=[Atributo])* (Funcion)? ')'
-	')'//(define "Hello World" (hello-world2) )
+
+LargoLista:
+	'(' 'lenght' List ')'//PREGUNTAR
 ;
-Atributo:
-	(atributoName=ID | Funcion)
+
+CombinarLista:
+	'comb'//TODO
 ;
-Funcion:
-	'(' ( 'lambda') "(" ")" DataType ")"
+PosicionLista:
+	'pos' //TODO
+;
+
+Atributo:// aun por ver
+	(atributoName=ID)
+;
+
+FuncionSimplificada:
+	'(' 'define' '(' name=ID (n=DataType)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
-	'(' (/*'=' |*/ 'equal?' | 'eq?') DataType DataType')'
+	'(' (('equal?' | 'eq?') n1=DataType n2=DataType) | (Boolean_Op INT INT)')'//revisar equal de listas co
+		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
 
-BooleanExpression:
-	Boolean_Op expr1=Expr expr2=Expr
+//BooleanExpression:
+//	Boolean_Op expr1=Expr expr2=Expr  //no se para que es esto
+//;
+
+If://check
+	'(' 'if' '(' condition = Equal ')'	
+		('(')? then = Bloque (')')?
+		'(' else = Bloque ')' ')'
 ;
-If:
-	
-	'if' '(' condition = BooleanExpression ')'	
-		then = Bloque
-		(=> else = Bloque)?
-		
-;
+
 Bloque:
 	Simple 
 ;
-//maybe not necessary MAYBEnot
-//Error: 
-//	'error' STRING
-//;
-//Cond:
-//	'(' 
-//	('[''(' Boolean_Op Number Number')' '(' Error ')'']')+
-//	'[''else' (STRING | Number | Aritmetica) ']'
-//	')'
-//;
