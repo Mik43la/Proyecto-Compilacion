@@ -10,7 +10,7 @@ Programa:
 ;
 
 Ejecucion:
-	'>' Expr//revisar
+	'>' Expr
 ;
 
 Declaraciones:
@@ -22,36 +22,23 @@ Simple:
 ;
 
 Expr:
-	(DataType | Aritmetica | Equal  | Define | FuncionSimplificada)
+	(DataType | Aritmetica | Equal  | Variables | FuncionSimplificada)
 ;
 
-
-
-Number: 
-	INT | Double //| Fractions
-;
-
-Digit:
-	('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')
-;
-
-Double: 
-	INT'.'Digit Digit 
-;
 DataType:
-	(INT | STRING | Bool | Double | List)
+	(INT | STRING | Bool | List)
 ;
 IsDataType: 
 	('number?' | 'string?' | 'list?' ) DataType //???? no se
 ;
 Aritmetica:
-	'(' Operacion INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos
+	'(' Operadores INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
 		//pd si quieres agregar double en ves de Int es number
 ;
 
-Operacion:
-	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar
+Operadores:
+	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
 ;
 
 Variables:
@@ -59,7 +46,7 @@ Variables:
 ;
 
 Boolean_Op: 
-	('<' | '>=' | '>' | '<=' | '=')
+	('<' | '>=' | '>' | '<=' )
 ;
 
 Bool:
@@ -68,38 +55,34 @@ Bool:
 
 Estructuras:
 	 If   //por ver
-;
-
-IterableDataType:
-	STRING|List//revisar donde se usa??
-;
-	
+;	
 
 List:
 
-	'(''list' ( (Number)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' //check ver lo del number
+	'(''list' ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
-Define: //revisar
-	'(' 'define' name=ID 
-	'('  (atributos+=[Atributo])* (Funcion)? ')'
-	')'//(define "Hello World" (hello-world2) )
+LargoLista:
+	'(' 'lenght' List ')'//PREGUNTAR
+;
+
+CombinarLista:
+	'comb'//TODO
+;
+PosicionLista:
+	'pos' //TODO
 ;
 
 Atributo:// aun por ver
-	(atributoName=ID | Funcion)
-;
-
-Funcion://hacer el simplificado
-	'(' ( 'lambda') "(" ")" DataType ")"//TODO
+	(atributoName=ID)
 ;
 
 FuncionSimplificada:
-	'(' 'define' '(' name=ID ')' DataType ')'
+	'(' 'define' '(' name=ID (n=DataType)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
-	'(' ('=' | 'equal?' | 'eq?') DataType DataType')'//revisar equal de listas co
+	'(' (('equal?' | 'eq?') n1=DataType n2=DataType) | (Boolean_Op INT INT)')'//revisar equal de listas co
 		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
 
@@ -108,12 +91,11 @@ Equal:
 //;
 
 If://check
-	
 	'(' 'if' '(' condition = Equal ')'	
 		('(')? then = Bloque (')')?
 		'(' else = Bloque ')' ')'
-		
 ;
+
 Bloque:
 	Simple 
 ;
