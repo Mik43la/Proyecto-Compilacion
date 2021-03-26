@@ -1,6 +1,6 @@
 grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
-
+//Lista de any no
 //cond define else keywords
 Programa: 
  //  '#lang racket'
@@ -11,7 +11,7 @@ Programa:
 ;
 
 Ejecucion:
-	'>' Expr
+	'>' Expr  
 ;
 
 Declaraciones:
@@ -22,12 +22,20 @@ Simple:
 	Expr | Estructuras
 ;
 
+Imprimible:
+	'> ' (var=[Variables] |fun=[FuncionSimplificada])
+;
+
+NoImprimible:
+	var=[Variables] | fun=[FuncionSimplificada]
+;
+
 Expr:
-	(DataType_ | Aritmetica | Equal  | Variables | FuncionSimplificada)
+	(DataType_ | Aritmetica | Equal  | Variables | FuncionSimplificada  )
 ;
 
 DataType_:
-	 ( MyInt | MyString | Bool | List)
+	 ( MyInt | MyString | MyBool | List)
 ;
 MyInt:
 	value = INT
@@ -39,13 +47,12 @@ MyBool: /////////
 	value = Bool
 ;
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType_ //???? no se
+	'(' ('number?' | 'string?' | 'list?' ) isType=DataType_ ')'//???? no se
 ;
 
 Aritmetica:
-	'('op = Operadores argument+=MyInt argument+=MyInt+')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'(' op = Operadores (argument+=(MyInt))+ ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
-		//pd si quieres agregar double en ves de Int es number
 ;
 
 Operadores:
@@ -53,7 +60,7 @@ Operadores:
 ;
 
 Variables:
-( '(' 'define' nombreaVar=ID val = DataType_ ')')  //supercheck
+( '(' 'define' name=ID val = DataType_ ')')  //supercheck
 ;
 
 Boolean_Op: 
@@ -69,7 +76,7 @@ Estructuras:
 ;	
 
 List:
-	 {List}	'(''list'  typeOfList+=DataType_ typeOfList+=DataType_* ')' 
+	 {List}	'(''list'  (typeOfList+=DataType_)+ ')' 
 	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
@@ -89,7 +96,7 @@ Atributo:// aun por ver
 ;
 
 FuncionSimplificada:
-	'(' 'define' '(' name=ID (n+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+	'(' 'define' '(' name=ID (atributo+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
