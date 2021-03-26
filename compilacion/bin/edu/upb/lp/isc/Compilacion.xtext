@@ -41,8 +41,9 @@ MyBool: /////////
 IsDataType: 
 	('number?' | 'string?' | 'list?' ) DataType_ //???? no se
 ;
+
 Aritmetica:
-	'(' Operadores INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'('op = Operadores argument+=MyInt argument+=MyInt+')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
 		//pd si quieres agregar double en ves de Int es number
 ;
@@ -69,7 +70,7 @@ Estructuras:
 
 List:
 	 {List}	'(''list'  typeOfList= DataType_+ ')' 
-	//'(''list'   ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
 LargoLista:

@@ -15,6 +15,7 @@ import edu.upb.lp.isc.compilacion.FuncionSimplificada
 import edu.upb.lp.isc.compilacion.List
 import edu.upb.lp.isc.compilacion.MyInt
 import edu.upb.lp.isc.compilacion.MyString
+import edu.upb.lp.isc.compilacion.Operadores
 import edu.upb.lp.isc.compilacion.Programa
 import edu.upb.lp.isc.compilacion.Simple
 import edu.upb.lp.isc.compilacion.Variables
@@ -39,14 +40,15 @@ class CompilacionGenerator extends AbstractGenerator {
  	val a = resource.allContents.head as Programa
  	fsa.generateFile(a.name + ".cpp", generatePrograma(a))
 	}
+	
+	
+	
 	def generatePrograma(Programa a) 
 	'''
 	#include <bits/stdc++.h>
 	using namespace std;
 	int main()
-	{
-		    
-		    
+	{	    
 	«FOR d: a.declaraciones»
 	«generateDeclaraciones(d)»
 	«ENDFOR»
@@ -57,13 +59,24 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	'''
 	
+	
+	def generateEjecucion(Ejecucion e) 
+	'''
+	«IF e instanceof Expr» 
+	cout<<«generateExpr(e as Expr)»<<endl;
+	«ENDIF»
+	'''
+	
+	
+	
 	def generateDeclaraciones(Declaraciones d) 
 	'''
 	«IF d instanceof Simple»
 	«generateSimple(d as Simple)»
 	«ENDIF»
 	'''
-	
+	 
+	 
 	def generateSimple(Simple s)
 	''' 
 	«IF s instanceof Expr»
@@ -89,7 +102,8 @@ class CompilacionGenerator extends AbstractGenerator {
 	«ENDIF»
 	'''
 	
-	def generateDataType(DataType_ d)
+	
+	def generateDataType(DataType_ d) // TODO List
 	'''
 	«IF d instanceof MyInt »
 	«val data = d as MyInt»
@@ -100,27 +114,31 @@ class CompilacionGenerator extends AbstractGenerator {
 	«ELSEIF d instanceof Bool»
 	«val data = d as Bool»
 	«data.op»
-	«ELSEIF d instanceof List»
+	«ELSEIF d instanceof List» 
 	«val data = d as List»
-	«data.typeOfList»
+	[
+	«»
+	]
 	«ENDIF»
 	'''
 	
 	// cout<<"["<<dist[map['t']]<<"]";
-	def generateAritmetica(Aritmetica a)''''''
+	def generateAritmetica(Aritmetica a)
+	'''
+	«a.argument.map[value].join(generateOperadores(a.op))»
+	'''
+	
+	
+	def generateOperadores( Operadores o)
+	'''
+	«o.op»
+	'''
+	
 	def generateEqual(Equal e)''''''
 	def generateVariables(Variables v)''''''
 	def generateFuncionSimplificada(FuncionSimplificada f)''''''
 	def generateEstructuras(Estructuras e)''''''
 	
-	def generateEjecucion(Ejecucion e) 
-	'''
-	«IF e instanceof Expr» 
-	cout<<
-	«generateExpr(e as Expr)»
-	<<endl;
-	«ENDIF»
-	'''
 	
 	
 	}
