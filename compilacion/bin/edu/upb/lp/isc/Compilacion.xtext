@@ -1,16 +1,17 @@
 grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
-
+//Lista de any no
 //cond define else keywords
 Programa: 
  //  '#lang racket'
+ 	'Programa' name = ID 
 	(declaraciones += Declaraciones)*
 	(ejecuciones += Ejecucion)*
 	
 ;
 
 Ejecucion:
-	'>' Expr
+	'>' Expr  | Imprimible
 ;
 
 Declaraciones:
@@ -18,39 +19,56 @@ Declaraciones:
 ;
 
 Simple:
-	(Expr | structuras)
+	Expr | Estructuras
+;
+
+Imprimible:
+	'>' var+=[Variables]
+;
+
+NoImprimible:
+	var+=[Variables]
 ;
 
 Expr:
-	(DataType | Aritmetica | Equal  | Variables | FuncionSimplificada)
+	(DataType_ | Aritmetica | Equal  | Variables | FuncionSimplificada  )
 ;
 
-DataType:
-	(INT | STRING | Bool | List)
+DataType_:
+	 ( MyInt | MyString | MyBool | List)
+;
+MyInt:
+	value = INT
+;
+MyString:
+	value = STRING
+;
+MyBool: /////////
+	value = Bool
 ;
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType //???? no se
+	('number?' | 'string?' | 'list?' ) DataType_ //???? no se
 ;
+
 Aritmetica:
-	'(' Operadores INT INT (INT)* ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'('op = Operadores argument+=MyInt argument+=MyInt+')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
-		//pd si quieres agregar double en ves de Int es number
 ;
 
 Operadores:
-	('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
+	op = ('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
 ;
 
 Variables:
-( '(' 'define' nombreaVar=ID DataType ')')  //supercheck
+( '(' 'define' name=ID val = DataType_ ')')  //supercheck
 ;
 
 Boolean_Op: 
-	('<' | '>=' | '>' | '<=' )
+	op = ('<' | '>=' | '>' | '<=' )
 ;
 
 Bool:
-	('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+	op = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
 ;
 
 Estructuras:
@@ -58,8 +76,8 @@ Estructuras:
 ;	
 
 List:
-
-	'(''list' ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+	 {List}	'(''list'  typeOfList+=DataType_ typeOfList+=DataType_* ')' 
+	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
 LargoLista:
@@ -78,11 +96,11 @@ Atributo:// aun por ver
 ;
 
 FuncionSimplificada:
-	'(' 'define' '(' name=ID (n=DataType)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+	'(' 'define' '(' name=ID (n+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
-	'(' (('equal?' | 'eq?') n1=DataType n2=DataType) | (Boolean_Op INT INT)')'//revisar equal de listas co
+	'(' (('equal?' | 'eq?') n1=DataType_ n2=DataType_) | (Boolean_Op INT INT)')'//revisar equal de listas co
 		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
 
