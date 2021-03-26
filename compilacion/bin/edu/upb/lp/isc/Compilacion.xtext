@@ -23,11 +23,11 @@ Simple:
 ;
 
 Imprimible:
-	'>' var+=[Variables]
+	'>' (var=[Variables] |fun=[FuncionSimplificada])
 ;
 
 NoImprimible:
-	var+=[Variables]
+	var=[Variables] | fun=[FuncionSimplificada]
 ;
 
 Expr:
@@ -47,11 +47,11 @@ MyBool: /////////
 	value = Bool
 ;
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType_ //???? no se
+	'(' ('number?' | 'string?' | 'list?' ) isType=DataType_ ')'//???? no se
 ;
 
 Aritmetica:
-	'('op = Operadores argument+=MyInt argument+=MyInt+')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'(' op = Operadores (argument+=(MyInt|NoImprimible))+ ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
 ;
 
@@ -76,7 +76,7 @@ Estructuras:
 ;	
 
 List:
-	 {List}	'(''list'  typeOfList+=DataType_ typeOfList+=DataType_* ')' 
+	 {List}	'(''list'  (typeOfList+=DataType_)+ ')' 
 	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
@@ -96,7 +96,7 @@ Atributo:// aun por ver
 ;
 
 FuncionSimplificada:
-	'(' 'define' '(' name=ID (n+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+	'(' 'define' '(' name=ID (atributo+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
