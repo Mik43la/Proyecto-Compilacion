@@ -11,7 +11,7 @@ Programa:
 ;
 
 Ejecucion:
-	'>' Expr  | Imprimible
+	'>' Expr  
 ;
 
 Declaraciones:
@@ -51,7 +51,7 @@ IsDataType:
 ;
 
 Aritmetica:
-	'(' op = Operadores (argument+=(MyInt|NoImprimible))+ ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'(' op = Operadores (argument+=(MyInt))+ ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 		//el problema es que expt quotient remainder solo aceptan dos INT
 ;
 
