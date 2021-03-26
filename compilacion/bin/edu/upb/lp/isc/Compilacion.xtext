@@ -18,7 +18,7 @@ Declaraciones:
 ;
 
 Simple:
-	((expr+=Expr)+ | (estructura+=Estructuras)*)
+	(expr+=Expr | Estructuras)
 ;
 
 Expr:
