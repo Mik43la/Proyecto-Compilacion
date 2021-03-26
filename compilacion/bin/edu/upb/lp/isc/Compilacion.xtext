@@ -23,7 +23,7 @@ Simple:
 ;
 
 Imprimible:
-	'>' (var=[Variables] |fun=[FuncionSimplificada])
+	'> ' (var=[Variables] |fun=[FuncionSimplificada])
 ;
 
 NoImprimible:
