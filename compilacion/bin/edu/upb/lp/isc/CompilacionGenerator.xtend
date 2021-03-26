@@ -117,11 +117,17 @@ class CompilacionGenerator extends AbstractGenerator {
 	«ELSEIF d instanceof List» 
 	«val data = d as List»
 	[
-	«»
+	«var l = newLinkedList()»
+	«FOR i: data.typeOfList»«{l.add(generateDataType(i)); ""}»«ENDFOR»
+	«l.join(',')»
 	]
 	«ENDIF»
 	'''
-	
+	/*
+	 * for(i data.typeOfList: data.typeOfList.
+	 * 
+	 * «val z = newLinkedList(data.typeOfList)»
+	«z.map[].join(',')» */
 	// cout<<"["<<dist[map['t']]<<"]";
 	def generateAritmetica(Aritmetica a)
 	'''

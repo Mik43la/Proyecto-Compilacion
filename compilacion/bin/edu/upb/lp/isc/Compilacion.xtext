@@ -27,7 +27,7 @@ Expr:
 ;
 
 DataType_:
-	  ( MyInt | MyString | Bool | List)
+	 ( MyInt | MyString | Bool | List)
 ;
 MyInt:
 	value = INT
@@ -69,7 +69,7 @@ Estructuras:
 ;	
 
 List:
-	 {List}	'(''list'  typeOfList= DataType_+ ')' 
+	 {List}	'(''list'  typeOfList+=DataType_ typeOfList+=DataType_* ')' 
 	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
@@ -89,7 +89,7 @@ Atributo:// aun por ver
 ;
 
 FuncionSimplificada:
-	'(' 'define' '(' name=ID (n=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+	'(' 'define' '(' name=ID (n+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
