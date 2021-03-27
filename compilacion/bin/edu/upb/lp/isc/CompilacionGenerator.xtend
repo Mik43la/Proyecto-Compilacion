@@ -116,14 +116,14 @@ class CompilacionGenerator extends AbstractGenerator {
 	«data.op»
 	«ELSEIF d instanceof List» 
 	«val data = d as List»
-	[
+	"["<<
 	«var l = newLinkedList()»
 	«FOR i: data.typeOfList»«{l.add(generateDataType(i)); ""}»«ENDFOR»
-	«l.join(',')»
-	]
+	«l.join('<<","<<')»
+	<<"]"
 	«ENDIF»
 	'''
-	/*
+	/*TODO REVISAR PARTE IMPRESION Y PARTE CODIGO
 	 * for(i data.typeOfList: data.typeOfList.
 	 * 
 	 * «val z = newLinkedList(data.typeOfList)»
@@ -141,7 +141,10 @@ class CompilacionGenerator extends AbstractGenerator {
 	'''
 	
 	def generateEqual(Equal e)''''''
-	def generateVariables(Variables v)''''''
+	def generateVariables(Variables v)
+	'''
+	«v.type»
+	'''
 	def generateFuncionSimplificada(FuncionSimplificada f)''''''
 	def generateEstructuras(Estructuras e)''''''
 	

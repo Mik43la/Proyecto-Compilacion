@@ -53,7 +53,7 @@ Operadores:
 ;
 
 Variables:
-( '(' 'define' nombreaVar=ID val = DataType_ ')')  //supercheck
+( '(' 'define' nombreaVar=ID type = DataType_ ')')  //supercheck
 ;
 
 Boolean_Op: 
