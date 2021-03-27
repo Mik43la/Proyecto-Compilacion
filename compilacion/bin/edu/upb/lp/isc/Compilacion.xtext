@@ -23,10 +23,10 @@ Simple:
 ;
 
 Expr:
-	(DataType_ | Aritmetica | Equal  | Variables | FuncionSimplificada)
+	(Data| Aritmetica | Equal  | Variable | FuncionSimplificada)
 ;
 
-DataType_:
+Data:
 	 ( MyInt | MyString | Bool | List)
 ;
 MyInt:
@@ -35,11 +35,9 @@ MyInt:
 MyString:
 	value = STRING
 ;
-MyBool: /////////
-	value = Bool
-;
+
 IsDataType: 
-	('number?' | 'string?' | 'list?' ) DataType_ //???? no se
+	('number?' | 'string?' | 'list?' ) Data //???? no se
 ;
 
 Aritmetica:
@@ -52,8 +50,8 @@ Operadores:
 	op = ('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
 ;
 
-Variables:
-( '(' 'define' nombreaVar=ID type = DataType_ ')')  //supercheck
+Variable:
+( '(' 'define' nombreaVar=ID data = Data ')')  //supercheck
 ;
 
 Boolean_Op: 
@@ -61,7 +59,7 @@ Boolean_Op:
 ;
 
 Bool:
-	op = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+	value = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
 ;
 
 Estructuras:
@@ -69,31 +67,36 @@ Estructuras:
 ;	
 
 List:
-	 {List}	'(''list'  typeOfList+=DataType_ typeOfList+=DataType_* ')' 
+	 {List}	'(''list' data+=Data+')' 
 	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
-LargoLista:
-	'(' 'lenght' List ')'//PREGUNTAR
+LengthList:
+	'(' 'lenght' List ')'//TODO
 ;
 
-CombinarLista:
+HeadList:
 	'comb'//TODO
 ;
-PosicionLista:
+GetIndexList:
 	'pos' //TODO
 ;
+TailList:
+	'cod' //TODO
+;
 
-Atributo:// aun por ver
+Atributo:// aun por ver creo que Ya No
 	(atributoName=ID)
 ;
 
-FuncionSimplificada:
-	'(' 'define' '(' name=ID (n+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+FuncionSimplificada: // aqui probablemente deberia ser una Variable 
+//porque al definir Funciones le das variables como parametros
+// bueno, probablemente esto se repeteria en todo
+	'(' 'define' '(' name=ID (data+=Data)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
 ;
 
 Equal:
-	'(' (('equal?' | 'eq?') n1=DataType_ n2=DataType_) | (Boolean_Op INT INT)')'//revisar equal de listas co
+	'(' (('equal?' | 'eq?') data1=Data data2=Data) | (op=Boolean_Op data1=MyInt data2=MyInt)')'//revisar equal de listas co
 		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
 
