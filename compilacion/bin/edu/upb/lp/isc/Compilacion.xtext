@@ -35,9 +35,13 @@ MyString:
 ;
 
 Aritmetica:
-	'('op = (Operadores|Boolean_Op) argument+=(Argument) argument+=(Argument)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 															//el problema es que expt quotient remainder solo aceptan dos INT
 															//pd si quieres agregar double en ves de Int es number
+;
+
+AllOp:
+	Operadores|Boolean_Op
 ;
 
 Operadores:
@@ -90,13 +94,15 @@ Equal:
 
 If://check
 	'(' 
-		'if' '(' condition = ( Equal | Aritmetica | LlamarFuncion)')'	
+		'if' '(' condition = ( CondicionIF)')'	
 		('(') then = Bloque (')')
 		 ('(' 'else' else = Bloque ')' )?
 		
 	')'
 ;
-
+CondicionIF:
+	Equal|Aritmetica|LlamarFuncion
+;
 Bloque:
 	Simple 
 ;
