@@ -17,15 +17,15 @@ Declaraciones:
 ;
 
 Simple:
-	Expr | Estructuras
+	Expr | Estructuras | Variable
 ;
 
 Expr:
-	( Data | Aritmetica | Equal  | FuncionSimplificada | List_Operation | LlamarFuncion)
+	( Data | Aritmetica | Equal  | FuncionSimplificada | List_Cons_Operation )
 ;
 
 Data:
-	 ( MyInt | MyString | Bool | List)
+	 ( MyInt | MyString | Bool | List | LlamarFuncion | Cons)
 ;
 MyInt:
 	value = INT
@@ -39,7 +39,7 @@ IsDataType:
 ;
 
 Aritmetica:
-	'('op = (Operadores|Boolean_Op) argument+=MyInt argument+=MyInt+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'('op = (Operadores|Boolean_Op) argument+=(Variable|Expr) argument+=(Variable|Expr)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 															//el problema es que expt quotient remainder solo aceptan dos INT
 															//pd si quieres agregar double en ves de Int es number
 ;
@@ -63,14 +63,18 @@ Bool:
 Estructuras:
 	 If   //por ver
 ;	
-
+//klajdafs ñ.ñ
+Cons:
+	//'(''cons' primer= (Data|Variable) segundo=(Data|Variable) ')'
+	'(''cons' primer= (Expr|Variable) segundo=(Expr|Variable) ')'
+;
 List:
 	 {List}	'(''list' data+=Data+')' 
 	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
 ;
 
-List_Operation:
-	'(' op = ('length'|'car'|'cdr'|'list-ref')  l=List ')'//TODO
+List_Cons_Operation:
+	'(' op = ('length'|'car'|'cdr'|'list-ref')  lYc = Simple')'//TODO
 ;
 
 Atributo:// aun por ver creo que Ya No
@@ -86,7 +90,7 @@ FuncionSimplificada: // aqui probablemente deberia ser una Variable
 ;
 
 LlamarFuncion: 
-	'(' nombreFuncion= [FuncionSimplificada] arguments+=Data* ')'
+	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Expr|Variable)* ')'
 ;
 
 Equal:
@@ -101,9 +105,9 @@ Equal:
 
 If://check
 	'(' 
-		'if' '(' condition = ( Equal | Aritmetica)')'	
+		'if' '(' condition = ( Equal | Aritmetica | LlamarFuncion)')'	
 		('(') then = Bloque (')')
-		 '(' 'else' else = Bloque ')' 
+		 ('(' 'else' else = Bloque ')' )?
 		
 	')'
 ;
