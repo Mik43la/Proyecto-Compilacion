@@ -9,7 +9,7 @@ Programa:
 ;
 
 Ejecucion:
-	'>' Expr
+	'> ' Expr
 ;
 
 Declaraciones:
@@ -21,7 +21,7 @@ Simple:
 ;
 
 Expr:
-	( Data | Aritmetica | Equal  | FuncionSimplificada | List_Cons_Operation )
+	( Data | Aritmetica | Equal  | FuncionSimplificada |Define| List_Cons_Operation )
 ;
 
 Data:
@@ -34,12 +34,8 @@ MyString:
 	value = STRING
 ;
 
-IsDataType: 
-	('number?' | 'string?' | 'list?' ) Data //???? no se
-;
-
 Aritmetica:
-	'('op = (Operadores|Boolean_Op) argument+=(Variable|Expr) argument+=(Variable|Expr)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
+	'('op = (Operadores|Boolean_Op) argument+=(Argument) argument+=(Argument)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
 															//el problema es que expt quotient remainder solo aceptan dos INT
 															//pd si quieres agregar double en ves de Int es number
 ;
@@ -51,7 +47,6 @@ Operadores:
 Variable:
 (  nombreaVar=ID  )  //supercheck
 ;
-
 Boolean_Op: 
 	op = ('<' | '>=' | '>' | '<=' )
 ;
@@ -65,32 +60,26 @@ Estructuras:
 ;	
 //klajdafs ñ.ñ
 Cons:
-	//'(''cons' primer= (Data|Variable) segundo=(Data|Variable) ')'
-	'(''cons' primer= (Expr|Variable) segundo=(Expr|Variable) ')'
+	
+	'(''cons' primer= (Argument) segundo=(Argument) ')'
 ;
 List:
 	 {List}	'(''list' data+=Data+')' 
-	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+	
 ;
 
 List_Cons_Operation:
 	'(' op = ('length'|'car'|'cdr'|'list-ref')  lYc = Simple')'//TODO
 ;
 
-Atributo:// aun por ver creo que Ya No
-	(atributoName=ID)
+FuncionSimplificada: 
+	'(' 'define' '(' name=ID (parameter+=Argument)*')' '(' then=Bloque')'  ')'//revisar    PREGUNTAR
 ;
-
-FuncionSimplificada: // aqui probablemente deberia ser una Variable 
-//porque al definir Funciones le das variables como parametros
-// bueno, probablemente esto se repeteria en todo
-//al crear una funcion solo estas usando variables sin valores almacenados
-//al llamar funcion se otorga valores\
-	'(' 'define' '(' name=ID (parameter+=Variable)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+Define:
+	'define' '('(name= ID parameter=Argument) ')'
 ;
-
 LlamarFuncion: 
-	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Expr|Variable)* ')'
+	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Argument)* ')'
 ;
 
 Equal:
@@ -98,10 +87,6 @@ Equal:
 	//revisar equal de listas co
 	//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
 ;
-
-//BooleanExpression:
-//	Boolean_Op expr1=Expr expr2=Expr  //no se para que es esto
-//;
 
 If://check
 	'(' 
@@ -114,4 +99,8 @@ If://check
 
 Bloque:
 	Simple 
+;
+
+Argument:
+	Variable|Expr
 ;
