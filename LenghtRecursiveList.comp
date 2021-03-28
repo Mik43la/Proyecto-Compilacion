@@ -3,7 +3,7 @@ define (l (list 1 2 3))
 define (tam 0)
 
 (define(recursiveLenght lista tamanio) (
-	(if ([eq? (car l) 1])
+	(if ((eq? (car l) 1))
 		(tam)
 		else (
 			(recursiveLenght (cdr l) (+ tamanio 1))
