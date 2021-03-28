@@ -4,8 +4,7 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 //cond define else keywords
 Programa: 
  	'Programa' name = ID 
-	(declaraciones += Declaraciones)*
-	(ejecuciones += Ejecucion)*
+	(declaraciones += Declaraciones)*(ejecuciones += Ejecucion)*
 ;
 
 Ejecucion:
@@ -42,7 +41,7 @@ AllOp:
 ;
 
 Operadores:
-	op = ('=' | '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+	op = ( '='| '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
 
 Variable:
@@ -84,7 +83,7 @@ LlamarFuncion:
 ;
 
 Equal:
-	'[' ((('equal?' | 'eq?') data1=Argument data2=Argument) | (op=Boolean_Op data1=MyInt data2=MyInt))']'
+	'(' ('equal?' | 'eq?') data1=Argument data2=Argument ')'
 ;
 
 If:
