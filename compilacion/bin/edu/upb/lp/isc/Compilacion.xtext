@@ -21,11 +21,11 @@ Simple:
 ;
 
 Expr:
-	( Data | Aritmetica | Equal  | FuncionSimplificada |Define| List_Cons_Operation )
+	( Data | Aritmetica | Equal  | FuncionSimplificada |Define| List_Cons_Operation | LlamarFuncion | Cons)
 ;
 
 Data:
-	 ( MyInt | MyString | Bool | List | LlamarFuncion | Cons)
+	 ( MyInt | MyString | Bool | List )
 ;
 MyInt:
 	value = INT
