@@ -6,13 +6,13 @@ Programa ewe
 	(
 		(if ((isEmpty L))
 			( M )
-			(else 
+			else (
 				(if((isEmpty M))
 					(L)
-					(else 
+					else (
 						(if ( (< (car L) (car M)) )
 							((cons (car L) (merge (cdr L) M) ))
-							(else 
+							else( 
 								(cons (car M)(merge (cdr M) L)) 
 							)
 						)	
@@ -27,7 +27,7 @@ Programa ewe
 	(
 		(if((isEmpty l))
 			(acc)
-			(else
+			else(
 				(reverseInner (cdr l) (cons (car l) acc))
 			)
 			
