@@ -1,17 +1,15 @@
 grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
 generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
-//Lista de any no
+
 //cond define else keywords
 Programa: 
- //  '#lang racket'
  	'Programa' name = ID 
 	(declaraciones += Declaraciones)*
 	(ejecuciones += Ejecucion)*
-	
 ;
 
 Ejecucion:
-	'> ' Expr  
+	'> ' Expr
 ;
 
 Declaraciones:
@@ -19,23 +17,15 @@ Declaraciones:
 ;
 
 Simple:
-	Expr | Estructuras
-;
-
-Imprimible:
-	'> ' (var=[Variables] |fun=[FuncionSimplificada])
-;
-
-NoImprimible:
-	var=[Variables] | fun=[FuncionSimplificada]
+	Estructuras | Argument
 ;
 
 Expr:
-	(DataType_ | Aritmetica | Equal  | Variables | FuncionSimplificada  )
+	( Data | Aritmetica | Equal  | FuncionSimplificada |Define| List_Cons_Operation | LlamarFuncion | Cons)
 ;
 
-DataType_:
-	 ( MyInt | MyString | MyBool | List)
+Data:
+	 ( MyInt | MyString | Bool | List )
 ;
 MyInt:
 	value = INT
@@ -43,77 +33,76 @@ MyInt:
 MyString:
 	value = STRING
 ;
-MyBool: /////////
-	value = Bool
-;
-IsDataType: 
-	'(' ('number?' | 'string?' | 'list?' ) isType=DataType_ ')'//???? no se
-;
 
 Aritmetica:
-	'(' op = Operadores (argument+=(MyInt))+ ')' //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
-		//el problema es que expt quotient remainder solo aceptan dos INT
+	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'
+;
+AllOp:
+	Operadores|Boolean_Op
 ;
 
 Operadores:
-	op = ('+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
+	op = ( '='| '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
 
-Variables:
-( '(' 'define' name=ID val = DataType_ ')')  //supercheck
+Variable:
+(  nombreaVar=ID  )  
 ;
-
 Boolean_Op: 
 	op = ('<' | '>=' | '>' | '<=' )
 ;
 
 Bool:
-	op = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+	value = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
 ;
 
 Estructuras:
-	 If   //por ver
+	 If   
 ;	
 
+Cons:
+	
+	'(''cons' primer= (Argument) segundo=(Argument) ')'
+;
 List:
-	 {List}	'(''list'  (typeOfList+=DataType_)+ ')' 
-	//{List}'(''list'  typeOfList = ( (INT)+ | (STRING)+ | (Bool)+ | (List)+ ) ')' 
+	 {List}	'(''list' (data+=(Data|Variable))+')' 
+	
 ;
 
-LargoLista:
-	'(' 'lenght' List ')'//PREGUNTAR
+List_Cons_Operation:
+	'(' op = ('length'|'car'|'cdr'|'list-ref')  lYc = Simple')'//TODO
 ;
 
-CombinarLista:
-	'comb'//TODO
+FuncionSimplificada: 
+	'(' 'define' '(' name=ID (parameter+=Argument)*')' '(' then=Bloque')'  ')'
 ;
-PosicionLista:
-	'pos' //TODO
+Define:
+	'define' '('(name= ID parameter=Argument) ')'
 ;
-
-Atributo:// aun por ver
-	(atributoName=ID)
-;
-
-FuncionSimplificada:
-	'(' 'define' '(' name=ID (atributo+=DataType_)*')' '(' then=Bloque ')' ')'//revisar    PREGUNTAR
+LlamarFuncion: 
+	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Argument)* ')'
 ;
 
 Equal:
-	'(' (('equal?' | 'eq?') n1=DataType_ n2=DataType_) | (Boolean_Op INT INT)')'//revisar equal de listas co
-		//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
+	'(' ('equal?' | 'eq?') data1=Argument data2=Argument ')'
 ;
 
-//BooleanExpression:
-//	Boolean_Op expr1=Expr expr2=Expr  //no se para que es esto
-//;
-
-If://check
-	'(' 'if' '(' condition = Equal ')'	
-		('(')? then = Bloque (')')?
-		'(' else = Bloque ')' ')'
+If:
+	'(' 
+		'if' '(' condition = ( CondicionIF)')'	
+		'(' then = Bloque ')'
+		 ( 'else' '('else = Bloque ')' )?
+		
+	')'
+;
+CondicionIF:
+	Equal|Aritmetica|LlamarFuncion
 ;
 
 Bloque:
 	Simple 
+;
+
+Argument:
+	Variable|Expr
 ;

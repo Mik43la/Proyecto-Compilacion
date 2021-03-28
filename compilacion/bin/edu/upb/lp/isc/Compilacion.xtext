@@ -4,7 +4,8 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 //cond define else keywords
 Programa: 
  	'Programa' name = ID 
-	(declaraciones += Declaraciones)*(ejecuciones += Ejecucion)*
+	(declaraciones += Declaraciones)*
+	(ejecuciones += Ejecucion)*
 ;
 
 Ejecucion:
@@ -90,7 +91,7 @@ If:
 	'(' 
 		'if' '(' condition = ( CondicionIF)')'	
 		'(' then = Bloque ')'
-		 ( 'else' '('else=Bloque ')' )?
+		 ( 'else' '('else = Bloque ')' )?
 		
 	')'
 ;
