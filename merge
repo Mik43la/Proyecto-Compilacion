@@ -1,0 +1,38 @@
+Programa ewe
+
+(define (isEmpty l)( (= ( length l) 0) )) 
+
+(define (merge L M) 
+	(
+		(if ((isEmpty L))
+			( M )
+			(else 
+				(if((isEmpty M))
+					(L)
+					(else 
+						(if ( (< (car L) (car M)) )
+							((cons (car L) (merge (cdr L) M) ))
+							(else 
+								(cons (car M)(merge (cdr M) L)) 
+							)
+						)	
+					)	
+				)
+			)	 
+		)
+	)
+)
+
+(define (reverseInner l acc)
+	(
+		(if((isEmpty l))
+			(acc)
+			(else
+				(reverseInner (cdr l) (cons (car l) acc))
+			)
+			
+			
+		)
+	)
+	
+)
