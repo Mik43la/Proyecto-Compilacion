@@ -64,7 +64,7 @@ Cons:
 	'(''cons' primer= (Argument) segundo=(Argument) ')'
 ;
 List:
-	 {List}	'(''list' data+=Data+')' 
+	 {List}	'(''list' (data+=(Data|Variable))+')' 
 	
 ;
 
