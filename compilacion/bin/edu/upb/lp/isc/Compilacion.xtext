@@ -90,7 +90,7 @@ If:
 	'(' 
 		'if' '(' condition = ( CondicionIF)')'	
 		'(' then = Bloque ')'
-		 ( 'else' '('else = Bloque ')' )?
+		 ( 'else' '('else=Bloque ')' )?
 		
 	')'
 ;
