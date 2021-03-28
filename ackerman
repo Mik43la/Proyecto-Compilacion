@@ -4,11 +4,11 @@ Programa uwu
 		(   
 			if ((= m 0))
 			 	((+ n 1))
-			    ( else 
+			     else (
 			    	(
 			    		if ((+ n 1))
 				   		   (	(ackerman (- m 1) 1)	)
-				   			( else
+				   			 else(
 				   				(ackerman (- m 1) (ackerman m (- n 1) )	)
 				   					
 				   			)
