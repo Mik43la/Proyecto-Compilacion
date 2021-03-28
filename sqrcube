@@ -1,0 +1,3 @@
+Programa awa 
+(define (sqr n)((* n n)))
+(define (cube n)((* n (sqr n))) )    
