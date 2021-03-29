@@ -51,7 +51,7 @@ Operadores://TODO  ==
 ;
 
 Variable:
-(  nombreaVar=ID  )  
+(  nombreaVar=ID typeVar=Type )  
 ;
 Boolean_Op: 
 	op = ('<' | '>=' | '>' | '<=' )
@@ -78,10 +78,16 @@ List_Operation:
 ;
 
 FuncionSimplificada: 
-	'(' 'define' '(' name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')'  ')'
+	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')'  ')'
 ;
 Define:
-	'define' '('(name= ID parameter=Argument) ')'
+	'define' '('(name= ID basta=Type parameter=Argument) ')'
+;
+Type:
+	typeOfVariable= 'int'| 'string'| 'bool'| 'vector<'inner+=Type+'>';
+
+Other:
+	uwu+= '<' o+=Other* '>'
 ;
 LlamarFuncion: 
 	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Argument)* ')'
