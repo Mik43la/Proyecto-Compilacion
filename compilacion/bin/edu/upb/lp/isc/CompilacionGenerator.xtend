@@ -28,7 +28,10 @@ import edu.upb.lp.isc.compilacion.MyString
 import edu.upb.lp.isc.compilacion.Operadores
 import edu.upb.lp.isc.compilacion.Programa
 import edu.upb.lp.isc.compilacion.Simple
+import edu.upb.lp.isc.compilacion.Type
+import edu.upb.lp.isc.compilacion.TyppES
 import edu.upb.lp.isc.compilacion.Variable
+import edu.upb.lp.isc.compilacion.Vec
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
@@ -96,12 +99,12 @@ class CompilacionGenerator extends AbstractGenerator {
 	«ENDIF»
 	'''
 	
-	
-	def generateVariable(Variable v)'''«v.nombreaVar»'''
-	
 	def generateArgument(Argument a)
 	'''«IF a instanceof Variable»«generateVariable(a as Variable)»«
 	ELSEIF a instanceof Expr»«generateExpr(a as Expr)»«ENDIF»'''
+	
+	def generateVariable(Variable v)'''«v.nombreaVar»'''
+	
 	
 	def generateExpr(Expr e)
 	'''
@@ -146,6 +149,7 @@ class CompilacionGenerator extends AbstractGenerator {
 	 * «val z = newLinkedList(data.typeOfList)»
 	«z.map[].join(',')» */
 	// cout<<"["<<dist[map['t']]<<"]";//TODO Revisar aritmetica
+	
 	def generateAritmetica(Aritmetica a)
 	'''«var list= newLinkedList»«
 	FOR i : a.argument»«{list.add(generateArgument(i)); ''}»«ENDFOR»«
@@ -162,23 +166,30 @@ class CompilacionGenerator extends AbstractGenerator {
 	def generateBooleanOp(Boolean_Op b)'''«b.op»'''
 	
 	
-	def generateType(Argument a)'''«IF a instanceof MyInt»int «
-		ELSEIF a instanceof MyString»string «
-		ELSEIF a instanceof Bool»bool «
-		ELSEIF a instanceof List»vector<«generateType(a.datal.head as Argument)»> «ENDIF» '''
-	//generateType(a.primer as Argument)»,«generateType(a.segundo as Argument)
-	//generateType(a.data as Argument)generateType(a.eContents.head as Argument
-	def coma()''','''
+	def generateType(Type typppe)'''«
+	IF typppe.t instanceof TyppES»«generateTyppES(typppe.t as TyppES)»«
+	ELSEIF typppe.t instanceof Vec»«generateVec(typppe.t as Vec)»«ENDIF»'''
 	
+	
+	
+	def generateTyppES(TyppES t)'''«t.uu» '''
+	
+	def generateVec(Vec vec)'''vector<«FOR index: vec.awa»«IF index instanceof Vec»«generateVec(index as Vec)»«
+	ELSEIF index instanceof TyppES»«generateTyppES(index as TyppES)»«ENDIF»«ENDFOR»
+	>'''
+	
+
 	def generateDefine(Define d)
-	'''«generateType(d.parameter as Argument)»«d.name»«
-	IF d.parameter instanceof List»«»«ELSE»=«ENDIF»«generateData(d.parameter as Data)»;'''
+	'''«generateType(d.basta)»«d.name»«
+	IF d.parameter instanceof List»«»«ELSE»=«ENDIF»«generateArgument(d.parameter as Argument)»;'''
 	
 	def generateEqual(Equal e)'''«e.data1»==«e.data2»'''
 	
-	
-	///«generateArgument(c.primer)»,«generateArgument(c.segundo)»
-	def generateLlamarFuncion(LlamarFuncion lf)'''«generateFuncionSimplificada(lf.nombreFuncion)»'''
+	//IF vec.inside instanceof TyppES»«generateTyppES(vec.inside as TyppES)»«
+	//ELSEIF vec.inside instanceof Vec»«generateVec(vec.inside as Vec)»«
+	//ENDIF»«
+	///«generateArgument(c.primer)»,«generateArgument(c.segundo)»«generateFuncionSimplificada(lf.nombreFuncion)»
+	def generateLlamarFuncion(LlamarFuncion lf)''''''
 	
 	def generateList_Operation(List_Operation lco)''''''
 	
@@ -187,6 +198,9 @@ class CompilacionGenerator extends AbstractGenerator {
 	def generateEstructuras(Estructuras e)
 	'''«IF e instanceof If»«generateIf(e as If)»«ENDIF»'''
 	
+	
+	
+	
 	def generateIf(If i)
 	'''if(«generateCondicionIF(i.condition)»){«FOR w: i.then»«generateBloque(w as Bloque)»«ENDFOR»}else{«FOR w: i.eelse»«generateBloque(w as Bloque)»«ENDFOR»}'''
 	//«for(a: i.then) generateBloque(a)»}else{«for (e: i.eelse) generateBloque(e)»
@@ -194,6 +208,9 @@ class CompilacionGenerator extends AbstractGenerator {
 	'''«IF ci instanceof Equal»«generateEqual(ci as Equal)»«
 	ELSEIF ci instanceof Aritmetica»«generateAritmetica(ci as Aritmetica)»«
 	ELSEIF ci instanceof LlamarFuncion»«generateLlamarFuncion(ci as LlamarFuncion)»«ENDIF»'''
+	
+	
+	
 	
 	def generateBloque(Bloque b)'''«generateSimple(b as Simple)»'''
 	

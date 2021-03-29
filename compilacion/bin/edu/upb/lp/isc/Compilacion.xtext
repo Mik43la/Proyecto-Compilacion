@@ -84,11 +84,16 @@ Define:
 	'define' '('(name= ID basta=Type parameter=Argument) ')'
 ;
 Type:
-	typeOfVariable= 'int'| 'string'| 'bool'| 'vector<'inner+=Type+'>';
-
-Other:
-	uwu+= '<' o+=Other* '>'
+	t = ( TyppES | Vec )
 ;
+
+TyppES:
+  uu = ('int' | 'string'| 'bool');
+
+Vec:
+	 'vector< ' awa += (TyppES|Vec)+  ' >'
+;
+
 LlamarFuncion: 
 	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Argument)* ')'
 ;
