@@ -17,15 +17,19 @@ Declaraciones:
 ;
 
 Simple:
-	Expr | Estructuras | Variable
+	Estructuras | Argument
 ;
 
 Expr:
-	( Data | Aritmetica | Equal  | FuncionSimplificada |Define| List_Cons_Operation )
+	( Data | Aritmetica | Equal  
+		| FuncionSimplificada |Define
+		| List_Operation 
+		| LlamarFuncion 
+	)
 ;
 
 Data:
-	 ( MyInt | MyString | Bool | List | LlamarFuncion | Cons)
+	 ( MyInt | MyString | Bool | List )
 ;
 MyInt:
 	value = INT
@@ -35,49 +39,46 @@ MyString:
 ;
 
 Aritmetica:
-	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'  //revisar + - * / aceptan si es solo un int pero los obligaremos a que sea dos //PREGUNTAR llamar funciones
-															//el problema es que expt quotient remainder solo aceptan dos INT
-															//pd si quieres agregar double en ves de Int es number
+	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'
 ;
-
 AllOp:
 	Operadores|Boolean_Op
 ;
-
-Operadores:
-	op = ('=' | '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')//revisar PREGUNTAR
+//TODO como hacer funciones
+//TODO no se puede imprimir dentro de ifs
+Operadores://TODO  ==
+	op = ( '=='| '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
 ;
 
 Variable:
-(  nombreaVar=ID  )  //supercheck
+(  nombreaVar=ID  )  
 ;
 Boolean_Op: 
 	op = ('<' | '>=' | '>' | '<=' )
 ;
 
 Bool:
-	value = ('#T' | '#F' | '#t' | '#f' | '#true' | '#false' | 'true' | 'false')
+	value = ( 'true' | 'false')
 ;
 
 Estructuras:
-	 If   //por ver
+	 If   
 ;	
-//klajdafs ñ.ñ
-Cons:
-	
-	'(''cons' primer= (Argument) segundo=(Argument) ')'
-;
-List:
-	 {List}	'(''list' data+=Data+')' 
-	
-;
 
-List_Cons_Operation:
-	'(' op = ('length'|'car'|'cdr'|'list-ref')  lYc = Simple')'//TODO
+
+List:
+	 {List}	'(''list' (datal+=(ListContent))+')' 
+	
+;
+ListContent:
+	Data | Variable
+;
+List_Operation:
+	'(' op = ('length'|'car'|'cdr')  lYc = Simple ')'//TODO
 ;
 
 FuncionSimplificada: 
-	'(' 'define' '(' name=ID (parameter+=Argument)*')' '(' then=Bloque')'  ')'//revisar    PREGUNTAR
+	'(' 'define' '(' name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')'  ')'
 ;
 Define:
 	'define' '('(name= ID parameter=Argument) ')'
@@ -87,22 +88,21 @@ LlamarFuncion:
 ;
 
 Equal:
-	'(' (('equal?' | 'eq?') data1=Data data2=Data) | (op=Boolean_Op data1=MyInt data2=MyInt)')'
-	//revisar equal de listas co
-	//n = no da con eq? da #f con equal? da #t podria hacer que en validation no deje usar equal si usa =
+	'(' ('equal?' | 'eq?') data1=Argument data2=Argument ')'
 ;
 
-If://check
+If:
 	'(' 
 		'if' '(' condition = ( CondicionIF)')'	
-		('(') then = Bloque (')')
-		 ('(' 'else' else = Bloque ')' )?
+		'(' (then+= Bloque)+ ')'
+		 ( 'else' '('(eelse+= Bloque)+ ')' )?
 		
 	')'
 ;
 CondicionIF:
 	Equal|Aritmetica|LlamarFuncion
 ;
+
 Bloque:
 	Simple 
 ;

@@ -10,7 +10,6 @@ import edu.upb.lp.isc.compilacion.Bloque
 import edu.upb.lp.isc.compilacion.Bool
 import edu.upb.lp.isc.compilacion.Boolean_Op
 import edu.upb.lp.isc.compilacion.CondicionIF
-import edu.upb.lp.isc.compilacion.Cons
 import edu.upb.lp.isc.compilacion.Data
 import edu.upb.lp.isc.compilacion.Declaraciones
 import edu.upb.lp.isc.compilacion.Define
@@ -22,7 +21,7 @@ import edu.upb.lp.isc.compilacion.FuncionSimplificada
 import edu.upb.lp.isc.compilacion.If
 import edu.upb.lp.isc.compilacion.List
 import edu.upb.lp.isc.compilacion.ListContent
-import edu.upb.lp.isc.compilacion.List_Cons_Operation
+import edu.upb.lp.isc.compilacion.List_Operation
 import edu.upb.lp.isc.compilacion.LlamarFuncion
 import edu.upb.lp.isc.compilacion.MyInt
 import edu.upb.lp.isc.compilacion.MyString
@@ -60,12 +59,12 @@ class CompilacionGenerator extends AbstractGenerator {
 	using namespace std;
 	int main()
 	{	    
-	Â«FOR d: a.declaracionesÂ»
-	Â«generateDeclaraciones(d)Â»
-	Â«ENDFORÂ»
-	Â«FOR e: a.ejecucionesÂ»
-	Â«generateEjecucion(e)Â»
-	Â«ENDFORÂ»
+	«FOR d: a.declaraciones»
+	«generateDeclaraciones(d)»
+	«ENDFOR»
+	«FOR e: a.ejecuciones»
+	«generateEjecucion(e)»
+	«ENDFOR»
 	}
 	
 	'''
@@ -73,151 +72,148 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	def generateEjecucion(Ejecucion e) 
 	'''
-	Â«IF e instanceof ExprÂ» 
-	cout<<Â«generateExpr(e as Expr)Â»<<endl;
-	Â«ENDIFÂ»
+	«IF e instanceof Expr» 
+	cout<<«generateExpr(e as Expr)»<<endl;
+	«ENDIF»
 	'''
 	
 	
 	
 	def generateDeclaraciones(Declaraciones d) 
 	'''
-	Â«IF d instanceof SimpleÂ»
-	Â«generateSimple(d as Simple)Â»
-	Â«ENDIFÂ»
+	«IF d instanceof Simple»
+	«generateSimple(d as Simple)»
+	«ENDIF»
 	'''
 	
 	 
 	def generateSimple(Simple s)
 	''' 
-	Â«IF s instanceof ArgumentÂ»
-	Â«generateArgument(s as Argument)Â»
-	Â«ELSEIF s instanceof EstructurasÂ»
-	Â«generateEstructuras(s as Estructuras)Â»
-	Â«ENDIFÂ»
+	«IF s instanceof Argument»
+	«generateArgument(s as Argument)»
+	«ELSEIF s instanceof Estructuras»
+	«generateEstructuras(s as Estructuras)»
+	«ENDIF»
 	'''
 	
 	
-	def generateVariable(Variable v)'''Â«v.nombreaVarÂ»'''
+	def generateVariable(Variable v)'''«v.nombreaVar»'''
+	
 	def generateArgument(Argument a)
-	'''Â«IF a instanceof VariableÂ»Â«generateVariable(a as Variable)Â»Â«
-	ELSEIF a instanceof ExprÂ»Â«generateExpr(a as Expr)Â»Â«ENDIFÂ»'''
+	'''«IF a instanceof Variable»«generateVariable(a as Variable)»«
+	ELSEIF a instanceof Expr»«generateExpr(a as Expr)»«ENDIF»'''
 	
 	def generateExpr(Expr e)
 	'''
-	Â«IF e instanceof DataÂ»Â«
-	generateData(e as Data)Â»
-	Â«ELSEIF e instanceof AritmeticaÂ»Â«
-	generateAritmetica(e as Aritmetica)Â»Â«
-	ELSEIF e instanceof EqualÂ»
-	Â«generateEqual(e as Equal)Â»Â«
-	ELSEIF e instanceof FuncionSimplificadaÂ»
-	Â«generateFuncionSimplificada(e as FuncionSimplificada)Â»Â«
-	ELSEIF e instanceof DefineÂ»
-	Â«generateDefine(e as Define)Â»Â«
-	ELSEIF e instanceof List_Cons_OperationÂ»
-	Â«generateList_Cons_Operation(e as List_Cons_Operation)Â»Â«
-	ELSEIF e instanceof LlamarFuncionÂ»
-	Â«generateLlamarFuncion(e as LlamarFuncion)Â»Â«
-	ELSEIF e instanceof ConsÂ»
-	Â«generateCons(e as Cons)Â»
-	Â«ENDIFÂ»
+	«IF e instanceof Data»«
+	generateData(e as Data)»
+	«ELSEIF e instanceof Aritmetica»«
+	generateAritmetica(e as Aritmetica)»«
+	ELSEIF e instanceof Equal»
+	«generateEqual(e as Equal)»«
+	ELSEIF e instanceof FuncionSimplificada»
+	«generateFuncionSimplificada(e as FuncionSimplificada)»«
+	ELSEIF e instanceof Define»
+	«generateDefine(e as Define)»«
+	ELSEIF e instanceof List_Operation»
+	«generateList_Operation(e as List_Operation)»«
+	ELSEIF e instanceof LlamarFuncion»
+	«generateLlamarFuncion(e as LlamarFuncion)»«ENDIF»
 	'''
 	
 	
 	def generateData(Data d) // TODO List
-	'''Â«
-	IF d instanceof MyIntÂ»Â«generateMyInt(d as MyInt)Â»Â«
-	ELSEIF d instanceof MyStringÂ»Â«generateMyString(d as MyString)Â»Â«
-	ELSEIF d instanceof BoolÂ»Â«generateBool(d as Bool)Â»Â«
-	ELSEIF d instanceof ListÂ»Â«generateList(d as List)Â»Â«
-	ENDIFÂ»'''
+	'''«
+	IF d instanceof MyInt»«generateMyInt(d as MyInt)»«
+	ELSEIF d instanceof MyString»«generateMyString(d as MyString)»«
+	ELSEIF d instanceof Bool»«generateBool(d as Bool)»«
+	ELSEIF d instanceof List»«generateList(d as List)»«
+	ENDIF»'''
 	/*TODO REVISAR PARTE IMPRESION Y PARTE CODIGO
 	 * generateDataType(d.typeOfList as DataType_)
 	 * 
 	 * 
 	 * 
-	 * 	Â«ELSEIF d instanceof ListÂ» 
-		Â«val data = d as ListÂ»
-		"["<< Â«var l = newLinkedList()Â»
-		Â«FOR i: data.typeOfListÂ»Â«{l.add(generateDataType(i)); ""}Â»Â«ENDFORÂ»
-		Â«\\l.join('<<","<<')Â»<<"]"
-		Â«ENDIFÂ» this is list print
+	 * 	«ELSEIF d instanceof List» 
+		«val data = d as List»
+		"["<< «var l = newLinkedList()»
+		«FOR i: data.typeOfList»«{l.add(generateDataType(i)); ""}»«ENDFOR»
+		«\\l.join('<<","<<')»<<"]"
+		«ENDIF» this is list print
 	 * 
 	 * for(i data.typeOfList: data.typeOfList.
 	 * 
-	 * Â«val z = newLinkedList(data.typeOfList)Â»
-	Â«z.map[].join(',')Â» */
+	 * «val z = newLinkedList(data.typeOfList)»
+	«z.map[].join(',')» */
 	// cout<<"["<<dist[map['t']]<<"]";//TODO Revisar aritmetica
 	def generateAritmetica(Aritmetica a)
-	'''Â«var list= newLinkedListÂ»Â«
-	FOR i : a.argumentÂ»Â«{list.add(generateArgument(i)); ''}Â»Â«ENDFORÂ»Â«
-	list.join(generateAllOp(a.op as AllOp))Â»'''
+	'''«var list= newLinkedList»«
+	FOR i : a.argument»«{list.add(generateArgument(i)); ''}»«ENDFOR»«
+	list.join(generateAllOp(a.op as AllOp))»'''
 	
 	def generateAllOp(AllOp ao)
-	'''Â«IF ao instanceof OperadoresÂ»Â«generateOperadores(ao as Operadores)Â»Â«
-	ELSEIF ao instanceof Boolean_OpÂ»Â«generateBooleanOp(ao as Boolean_Op)Â»Â«ENDIFÂ»'''
+	'''«IF ao instanceof Operadores»«generateOperadores(ao as Operadores)»«
+	ELSEIF ao instanceof Boolean_Op»«generateBooleanOp(ao as Boolean_Op)»«ENDIF»'''
 	
 	
-	def generateOperadores( Operadores o)'''Â«o.opÂ»'''
+	def generateOperadores( Operadores o)'''«o.op»'''
 	
 	
-	def generateBooleanOp(Boolean_Op b)'''Â«b.opÂ»'''
+	def generateBooleanOp(Boolean_Op b)'''«b.op»'''
 	
 	
-	def generateType(Argument a)'''Â«IF a instanceof MyIntÂ»int Â«
-		ELSEIF a instanceof MyStringÂ»string Â«
-		ELSEIF a instanceof BoolÂ»bool Â«
-		ELSEIF a instanceof ListÂ»vector<Â« generateType(a.eContents.head as Argument)Â»> Â«
-		ELSEIF a instanceof ConsÂ»tuple<Â«generateType(a.primer)Â»,Â«generateType(a.segundo)Â»> Â«ENDIFÂ» '''
-	
-	//generateType(a.data as Argument)
-	
+	def generateType(Argument a)'''«IF a instanceof MyInt»int «
+		ELSEIF a instanceof MyString»string «
+		ELSEIF a instanceof Bool»bool «
+		ELSEIF a instanceof List»vector<«generateType(a.datal.head as Argument)»> «ENDIF» '''
+	//generateType(a.primer as Argument)»,«generateType(a.segundo as Argument)
+	//generateType(a.data as Argument)generateType(a.eContents.head as Argument
+	def coma()''','''
 	
 	def generateDefine(Define d)
-	'''Â«generateType(d.parameter as Argument)Â»Â«
-	d.nameÂ»Â«IF d.parameter instanceof Cons Â»Â«ELSEIF d.parameter instanceof ListÂ»Â«ELSEÂ»=Â«ENDIFÂ»Â«generateData(d.parameter as Data)Â»;'''
+	'''«generateType(d.parameter as Argument)»«d.name»«
+	IF d.parameter instanceof List»«»«ELSE»=«ENDIF»«generateData(d.parameter as Data)»;'''
 	
-	def generateEqual(Equal e)'''Â«e.data1Â»==Â«e.data2Â»'''
+	def generateEqual(Equal e)'''«e.data1»==«e.data2»'''
 	
-	def generateCons(Cons c)'''(Â«generateData(c.primer as Data)Â»,Â«generateData(c.segundo as Data)Â»)'''
 	
-	def generateLlamarFuncion(LlamarFuncion lf)'''Â«generateFuncionSimplificada(lf.nombreFuncion)Â»'''
+	///«generateArgument(c.primer)»,«generateArgument(c.segundo)»
+	def generateLlamarFuncion(LlamarFuncion lf)'''«generateFuncionSimplificada(lf.nombreFuncion)»'''
 	
-	def generateList_Cons_Operation(List_Cons_Operation lco)''''''
+	def generateList_Operation(List_Operation lco)''''''
 	
 	def generateFuncionSimplificada(FuncionSimplificada f)''''''
 	
 	def generateEstructuras(Estructuras e)
-	'''Â«IF e instanceof IfÂ»Â«generateIf(e as If)Â»Â«ENDIFÂ»'''
+	'''«IF e instanceof If»«generateIf(e as If)»«ENDIF»'''
 	
 	def generateIf(If i)
-	'''if(Â«generateCondicionIF(i.condition)Â»){Â«for(a: i.then) generateBloque(a)Â»}else{Â«for (e: i.eelse) generateBloque(e)Â»}'''
-	
+	'''if(«generateCondicionIF(i.condition)»){«FOR w: i.then»«generateBloque(w as Bloque)»«ENDFOR»}else{«FOR w: i.eelse»«generateBloque(w as Bloque)»«ENDFOR»}'''
+	//«for(a: i.then) generateBloque(a)»}else{«for (e: i.eelse) generateBloque(e)»
 	def generateCondicionIF(CondicionIF ci)
-	'''Â«IF ci instanceof EqualÂ»Â«generateEqual(ci as Equal)Â»Â«
-	ELSEIF ci instanceof AritmeticaÂ»Â«generateAritmetica(ci as Aritmetica)Â»Â«
-	ELSEIF ci instanceof LlamarFuncionÂ»Â«generateLlamarFuncion(ci as LlamarFuncion)Â»Â«ENDIFÂ»'''
+	'''«IF ci instanceof Equal»«generateEqual(ci as Equal)»«
+	ELSEIF ci instanceof Aritmetica»«generateAritmetica(ci as Aritmetica)»«
+	ELSEIF ci instanceof LlamarFuncion»«generateLlamarFuncion(ci as LlamarFuncion)»«ENDIF»'''
 	
-	def generateBloque(Bloque b)'''Â«generateSimple(b as Simple)Â»'''
+	def generateBloque(Bloque b)'''«generateSimple(b as Simple)»'''
 	
-	def generateMyInt(MyInt i)'''Â«i.valueÂ»'''
+	def generateMyInt(MyInt i)'''«i.value»'''
 	
-	def generateMyString(MyString s)'''Â«s.valueÂ»'''
+	def generateMyString(MyString s)'''"«s.value»"'''
 	
-	def generateBool(Bool b)'''Â«b.valueÂ»'''
+	def generateBool(Bool b)'''«b.value»'''
 	
 	def generateList(List l)
-	'''{Â«var newList = newLinkedList()Â»Â«
-	FOR i: l.datalÂ»Â«{newList.add(generateListContent(i)); ""}Â»Â«ENDFORÂ»Â«
-	newList.join(',')Â»}'''
+	'''{«var newList = newLinkedList()»«
+	FOR i: l.datal»«{newList.add(generateListContent(i)); ""}»«ENDFOR»«
+	newList.join(',')»}'''
 	
 	def generateListContent(ListContent lc)
-	'''Â«IF lc instanceof DataÂ»Â«generateData(lc as Data)Â»Â«
-	ELSEIF lc instanceof VariableÂ»Â«generateVariable(lc as Variable)Â»Â«ENDIFÂ»'''
-	////[Â«val newlist = newLinkedList(l)Â»
-		//Â«var nl = newLinkedList()Â»Â«FOR i: l.dataÂ»Â«{if (i instanceof Data) nl.add( i) else nl.add(generateVariable(i as Variable)); ""}Â»Â«ENDFORÂ»Â«nl.join(',')Â»'''
+	'''«IF lc instanceof Data»«generateData(lc as Data)»«
+	ELSEIF lc instanceof Variable»«generateVariable(lc as Variable)»«ENDIF»'''
+	////[«val newlist = newLinkedList(l)»
+		//«var nl = newLinkedList()»«FOR i: l.data»«{if (i instanceof Data) nl.add( i) else nl.add(generateVariable(i as Variable)); ""}»«ENDFOR»«nl.join(',')»'''
 	
-	//	Â«newlist.join(',')Â»]
-	///Â«FOR i: l.typeOfListÂ»Â«{newlist.add(generateValue(i)); ""}Â»Â«ENDFORÂ»
+	//	«newlist.join(',')»]
+	///«FOR i: l.typeOfList»«{newlist.add(generateValue(i)); ""}»«ENDFOR»
 	}
