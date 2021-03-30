@@ -1,0 +1,134 @@
+grammar edu.upb.lp.isc.Compilacion with org.eclipse.xtext.common.Terminals
+generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
+
+//cond define else keywords
+Programa: 
+ 	'Programa' name = ID 
+ 	(funciones+= FuncionSimplificada)*
+	(declaraciones += Declaraciones)*
+	(ejecuciones += Ejecucion)*
+;
+
+Ejecucion:
+	'> ' Expr
+;
+
+Declaraciones:
+	Simple 
+;
+
+Simple:
+	Estructuras | Argument
+;
+
+Expr:
+	( Data | Aritmetica | Equal  
+		| Define
+		| List_Operation 
+		| LlamarFuncion 
+	)
+;
+
+Data:
+	 ( MyInt | MyString | Bool | List )
+;
+MyInt:
+	value = INT
+;
+MyString:
+	value = STRING
+;
+
+Aritmetica:
+	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'
+;
+AllOp:
+	Operadores|Boolean_Op
+;
+//TODO como hacer funciones
+//TODO no se puede imprimir dentro de ifs
+Operadores://TODO  ==
+	op = ( '=='| '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+;
+
+Variable:
+(  nombreaVar=ID typeVar=Type )  
+;
+Boolean_Op: 
+	op = ( '<' | '>=' | '>' | '<=' | '!=' )
+;
+
+Bool:
+	value = ( 'true' | 'false')
+;
+
+Estructuras:
+	 If   
+;	
+
+
+List:
+	 {List}	'(''list' (datal+=(ListContent))+')' 
+	
+;
+ListContent:
+	Data | Variable
+;
+List_Operation:
+	'(' (op = ('length'|'car'|'cdr')  li = Simple ) ')'
+	|'('(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
+;
+
+NoQuiereValidar:
+	List|Variable
+;
+ReturnF:
+	'end' Simple
+;
+
+FuncionSimplificada: 
+	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' 
+		'(' (then+=Bloque)+')' returnf=ReturnF
+		')'
+;
+Define:
+	'define' '('(name=ID basta=Type parameter=Argument) ')' | name=ID parameter=Argument
+;
+Type:
+	 ( Nativos | Vec )
+;
+
+Nativos:
+  nat = ('int' | 'string'| 'bool');
+
+Vec:
+	 'list[' inside+=(Nativos|Vec)+  ']'
+;
+
+LlamarFuncion: 
+	'(' nombreFuncion = [FuncionSimplificada] arguments+=(Argument)* ')'
+;
+
+Equal:
+	'(' ('equal?' | 'eq?') data1=Argument data2=Argument ')'
+;
+
+If:
+	'(' 
+		'if' '(' condition = ( CondicionIF)')'	
+		'(' (then+= Bloque)+ ')'
+		 ( 'else' '('(eelse+= Bloque)+ ')' )?
+		
+	')'
+;
+CondicionIF:
+	Equal|Aritmetica|LlamarFuncion
+;
+
+Bloque:
+	Simple 
+;
+
+Argument:
+	Variable|Expr
+;
