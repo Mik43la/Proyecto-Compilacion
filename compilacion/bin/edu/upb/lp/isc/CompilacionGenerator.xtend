@@ -25,11 +25,11 @@ import edu.upb.lp.isc.compilacion.List_Operation
 import edu.upb.lp.isc.compilacion.LlamarFuncion
 import edu.upb.lp.isc.compilacion.MyInt
 import edu.upb.lp.isc.compilacion.MyString
+import edu.upb.lp.isc.compilacion.Nativos
 import edu.upb.lp.isc.compilacion.Operadores
 import edu.upb.lp.isc.compilacion.Programa
 import edu.upb.lp.isc.compilacion.Simple
 import edu.upb.lp.isc.compilacion.Type
-import edu.upb.lp.isc.compilacion.TyppES
 import edu.upb.lp.isc.compilacion.Variable
 import edu.upb.lp.isc.compilacion.Vec
 import org.eclipse.emf.ecore.resource.Resource
@@ -60,6 +60,22 @@ class CompilacionGenerator extends AbstractGenerator {
 	'''
 	#include <bits/stdc++.h>
 	using namespace std;
+	template <typename T>
+	vector<T> tail(vector<T> l){
+		return	vector<T> (l.begin()+1, l.end());
+	}
+	template <typename T>
+	T head(vector<T> l){
+		return l[0];
+	}
+	template <typename T>
+	vector<T> concat(vector<T>& first, vector<T>& second){
+		for(T i : second){
+			first.push_back(i);
+		}
+		return first;
+	}	
+	
 	int main()
 	{	    
 	«FOR d: a.declaraciones»
@@ -68,6 +84,7 @@ class CompilacionGenerator extends AbstractGenerator {
 	«FOR e: a.ejecuciones»
 	«generateEjecucion(e)»
 	«ENDFOR»
+	return 0;
 	}
 	
 	'''
@@ -152,8 +169,8 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	def generateAritmetica(Aritmetica a)
 	'''«var list= newLinkedList»«
-	FOR i : a.argument»«{list.add(generateArgument(i)); ''}»«ENDFOR»«
-	list.join(generateAllOp(a.op as AllOp))»'''
+	FOR i : a.argument»«{list.add(generateArgument(i)); ''}»«ENDFOR»(«
+	list.join(generateAllOp(a.op as AllOp))»)'''
 	
 	def generateAllOp(AllOp ao)
 	'''«IF ao instanceof Operadores»«generateOperadores(ao as Operadores)»«
@@ -167,15 +184,15 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	
 	def generateType(Type typppe)'''«
-	IF typppe.t instanceof TyppES»«generateTyppES(typppe.t as TyppES)»«
-	ELSEIF typppe.t instanceof Vec»«generateVec(typppe.t as Vec)»«ENDIF»'''
+	IF typppe instanceof Nativos»«generateNativos(typppe as Nativos)»«
+	ELSEIF typppe instanceof Vec»«generateVec(typppe as Vec)»«ENDIF»'''
 	
 	
 	
-	def generateTyppES(TyppES t)'''«t.uu» '''
+	def generateNativos(Nativos t)'''«t.nat» '''
 	
-	def generateVec(Vec vec)'''vector<«FOR index: vec.awa»«IF index instanceof Vec»«generateVec(index as Vec)»«
-	ELSEIF index instanceof TyppES»«generateTyppES(index as TyppES)»«ENDIF»«ENDFOR»
+	def generateVec(Vec vec)'''vector<«FOR index: vec.inside»«IF index instanceof Vec»«generateVec(index as Vec)»«
+	ELSEIF index instanceof Nativos»«generateNativos(index as Nativos)»«ENDIF»«ENDFOR»
 	>'''
 	
 
@@ -185,15 +202,24 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	def generateEqual(Equal e)'''«e.data1»==«e.data2»'''
 	
-	//IF vec.inside instanceof TyppES»«generateTyppES(vec.inside as TyppES)»«
-	//ELSEIF vec.inside instanceof Vec»«generateVec(vec.inside as Vec)»«
-	//ENDIF»«
-	///«generateArgument(c.primer)»,«generateArgument(c.segundo)»«generateFuncionSimplificada(lf.nombreFuncion)»
-	def generateLlamarFuncion(LlamarFuncion lf)''''''
+	def generateList_Operation(List_Operation lco)//TODO operaciones con listas
 	
-	def generateList_Operation(List_Operation lco)''''''
+	'''«IF lco.op == 'length'»«lco.li».size()«
+	ELSEIF lco.op == 'car'»head(«lco.li»)«
+	ELSEIF lco.op == 'cdr'»tail(«lco.li»)«
+	ELSEIF lco.op == 'concat'»concat(«lco.firstl»,«lco.secondl»)«ENDIF»'''
 	
-	def generateFuncionSimplificada(FuncionSimplificada f)''''''
+	def generateFuncionSimplificada(FuncionSimplificada f)//TODO funciones
+	'''«generateType(f.typeOfFunction)» «f.name» («var param= newLinkedList()»«
+	FOR e: f.parameter»«{param.add(generateArgument(e)); ""}»«ENDFOR»«param.join(',')»){
+		«FOR i: f.then»«generateBloque(i)»«ENDFOR»return «generateArgument(f.returnf as Argument)»;
+	}'''
+	
+	def generateLlamarFuncion(LlamarFuncion lf)//TODO llamar Funcion
+	'''«lf.nombreFuncion»(«var param= newLinkedList()»«
+	FOR i: lf.arguments»«param.add(generateArgument(i))»«ENDFOR»«
+	param.join(",")»)'''
+	
 	
 	def generateEstructuras(Estructuras e)
 	'''«IF e instanceof If»«generateIf(e as If)»«ENDIF»'''

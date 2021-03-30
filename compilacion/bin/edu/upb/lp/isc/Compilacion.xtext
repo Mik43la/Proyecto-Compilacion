@@ -74,24 +74,32 @@ ListContent:
 	Data | Variable
 ;
 List_Operation:
-	'(' op = ('length'|'car'|'cdr')  lYc = Simple ')'//TODO
+	'(' (op = ('length'|'car'|'cdr')  li = Simple )
+	|(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
+;
+
+NoQuiereValidar:
+	List|Variable
+;
+ReturnF:
+	'end' Argument
 ;
 
 FuncionSimplificada: 
-	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')'  ')'
+	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')' returnf=ReturnF')'
 ;
 Define:
 	'define' '('(name= ID basta=Type parameter=Argument) ')'
 ;
 Type:
-	t = ( TyppES | Vec )
+	 ( Nativos | Vec )
 ;
 
-TyppES:
-  uu = ('int' | 'string'| 'bool');
+Nativos:
+  nat = ('int' | 'string'| 'bool');
 
 Vec:
-	 'vector< ' awa += (TyppES|Vec)+  ' >'
+	 'vector< ' inside+=(Nativos|Vec)+  ' >'
 ;
 
 LlamarFuncion: 
