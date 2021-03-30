@@ -63,6 +63,8 @@ class CompilacionGenerator extends AbstractGenerator {
 	'''
 	«outsideMainMethods()»
 	
+	«FOR f: a.funciones»«
+	generateFuncionSimplificada(f)»«ENDFOR»
 	int main()
 	{	    
 	«FOR d: a.declaraciones»

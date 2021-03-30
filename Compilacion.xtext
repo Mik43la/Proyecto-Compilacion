@@ -4,6 +4,7 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 //cond define else keywords
 Programa: 
  	'Programa' name = ID 
+ 	(funciones+= FuncionSimplificada)*
 	(declaraciones += Declaraciones)*
 	(ejecuciones += Ejecucion)*
 ;
@@ -22,7 +23,7 @@ Simple:
 
 Expr:
 	( Data | Aritmetica | Equal  
-		| FuncionSimplificada |Define
+		| Define
 		| List_Operation 
 		| LlamarFuncion 
 	)
