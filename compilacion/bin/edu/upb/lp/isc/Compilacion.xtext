@@ -4,6 +4,7 @@ generate compilacion "http://www.upb.edu/lp/isc/Compilacion"
 //cond define else keywords
 Programa: 
  	'Programa' name = ID 
+ 	(funciones+= FuncionSimplificada)*
 	(declaraciones += Declaraciones)*
 	(ejecuciones += Ejecucion)*
 ;
@@ -22,7 +23,7 @@ Simple:
 
 Expr:
 	( Data | Aritmetica | Equal  
-		| FuncionSimplificada |Define
+		| Define
 		| List_Operation 
 		| LlamarFuncion 
 	)
@@ -54,7 +55,7 @@ Variable:
 (  nombreaVar=ID typeVar=Type )  
 ;
 Boolean_Op: 
-	op = ('<' | '>=' | '>' | '<=' )
+	op = ( '<' | '>=' | '>' | '<=' | '!=' )
 ;
 
 Bool:
@@ -74,22 +75,24 @@ ListContent:
 	Data | Variable
 ;
 List_Operation:
-	'(' (op = ('length'|'car'|'cdr')  li = Simple )
-	|(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
+	'(' (op = ('length'|'car'|'cdr')  li = Simple ) ')'
+	|'('(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
 ;
 
 NoQuiereValidar:
 	List|Variable
 ;
 ReturnF:
-	'end' Argument
+	'end' Simple
 ;
 
 FuncionSimplificada: 
-	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' '(' (then+=Bloque)+')' returnf=ReturnF')'
+	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' 
+		'(' (then+=Bloque)+')' returnf=ReturnF
+		')'
 ;
 Define:
-	'define' '('(name= ID basta=Type parameter=Argument) ')'
+	'define' '('(name=ID basta=Type parameter=Argument) ')'
 ;
 Type:
 	 ( Nativos | Vec )
@@ -99,11 +102,11 @@ Nativos:
   nat = ('int' | 'string'| 'bool');
 
 Vec:
-	 'vector< ' inside+=(Nativos|Vec)+  ' >'
+	 'list< ' inside+=(Nativos|Vec)+  ' >'
 ;
 
 LlamarFuncion: 
-	'(' nombreFuncion= [FuncionSimplificada] arguments+=(Argument)* ')'
+	'(' nombreFuncion = [FuncionSimplificada] arguments+=(Argument)* ')'
 ;
 
 Equal:

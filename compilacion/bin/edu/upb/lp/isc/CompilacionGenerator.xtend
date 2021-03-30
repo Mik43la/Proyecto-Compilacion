@@ -26,8 +26,10 @@ import edu.upb.lp.isc.compilacion.LlamarFuncion
 import edu.upb.lp.isc.compilacion.MyInt
 import edu.upb.lp.isc.compilacion.MyString
 import edu.upb.lp.isc.compilacion.Nativos
+import edu.upb.lp.isc.compilacion.NoQuiereValidar
 import edu.upb.lp.isc.compilacion.Operadores
 import edu.upb.lp.isc.compilacion.Programa
+import edu.upb.lp.isc.compilacion.ReturnF
 import edu.upb.lp.isc.compilacion.Simple
 import edu.upb.lp.isc.compilacion.Type
 import edu.upb.lp.isc.compilacion.Variable
@@ -56,65 +58,103 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	
 	
+	
 	def generatePrograma(Programa a) 
 	'''
-	#include <bits/stdc++.h>
-	using namespace std;
-	template <typename T>
-	vector<T> tail(vector<T> l){
-		return	vector<T> (l.begin()+1, l.end());
-	}
-	template <typename T>
-	T head(vector<T> l){
-		return l[0];
-	}
-	template <typename T>
-	vector<T> concat(vector<T>& first, vector<T>& second){
-		for(T i : second){
-			first.push_back(i);
-		}
-		return first;
-	}	
+	«outsideMainMethods()»
 	
-	int main()
-	{	    
-	«FOR d: a.declaraciones»
-	«generateDeclaraciones(d)»
+	«FOR f: a.funciones»«generateFuncionSimplificada(f)»«ENDFOR»
+	
+	
+	int main(){	    
+		
+		
+	«FOR d: a.declaraciones»    «generateDeclaraciones(d)»
+	
 	«ENDFOR»
-	«FOR e: a.ejecuciones»
-	«generateEjecucion(e)»
+	
+	«FOR e: a.ejecuciones»    «generateEjecucion(e)»
+	
 	«ENDFOR»
-	return 0;
+	
+		return 0;
 	}
 	
 	'''
+	
+	def outsideMainMethods()
+'''
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+vector<T> tail(vector<T> l){
+	return	vector<T> (l.begin()+1, l.end());
+}
+
+template <typename T>
+T head(vector<T> l){
+	return l[0];
+}
+
+template <typename T>
+vector<T> concat(vector<T>& first, vector<T>& second){
+	for(T i : second){
+		first.push_back(i);
+	}
+	return first;
+}
+'''
+		 
+	def generateFuncionSimplificada(FuncionSimplificada f)
+	'''
+«generateType(f.typeOfFunction)» «f.name» («var param= newLinkedList()»«
+		FOR e: f.parameter»«{param.add(generateFuncParameters(e as Variable)); ""}»«ENDFOR»«param.join(' , ')»){
+		«FOR i: f.then»    «generateBloque(i)»«ENDFOR»
+	    return «generateReturnF(f.returnf as ReturnF)»;
+}
+	'''	
+	/*
+	 * '''template <typename T>
+«generateType(f.typeOfFunction)» «f.name» («var param= newLinkedList()»«
+		FOR e: f.parameter»«{param.add('T '+generateArgument(e)); ""}»«ENDFOR»«param.join(' , ')»){
+		«FOR i: f.then»    «generateBloque(i)»«ENDFOR»
+	    return «generateArgument(f.returnf as Argument)»;
+}
+	'''	
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * «var param= newLinkedList()
+		»«FOR e: f.parameter»«{param.add(generateType(e as Type)+' '+generateArgument(e)) ;""}»«ENDFOR»){
+			
+	 * 
+	 * «var param= newLinkedList()»«
+	FOR e: f.parameter»«{param.add(generateArgument(e)); ""}»«ENDFOR»«param.join(' , ')»){
+	«FOR i: f.then»    «generateBloque(i)»«ENDFOR»
+	 */
 	
 	
 	def generateEjecucion(Ejecucion e) 
-	'''
-	«IF e instanceof Expr» 
-	cout<<«generateExpr(e as Expr)»<<endl;
-	«ENDIF»
+	'''«IF e instanceof Expr» cout<<«generateExpr(e as Expr)»<<endl;«ENDIF»
 	'''
 	
-	
+	def generateFuncParameters(Variable fp)'''«generateType(fp.typeVar)» «fp.nombreaVar»'''
 	
 	def generateDeclaraciones(Declaraciones d) 
-	'''
-	«IF d instanceof Simple»
-	«generateSimple(d as Simple)»
-	«ENDIF»
+	'''«IF d instanceof Simple»«
+	generateSimple(d as Simple)»«ENDIF»
 	'''
 	
 	 
 	def generateSimple(Simple s)
-	''' 
-	«IF s instanceof Argument»
-	«generateArgument(s as Argument)»
-	«ELSEIF s instanceof Estructuras»
-	«generateEstructuras(s as Estructuras)»
-	«ENDIF»
-	'''
+	'''«IF s instanceof Argument»«
+	generateArgument(s as Argument)»«
+	ELSEIF s instanceof Estructuras»«
+	generateEstructuras(s as Estructuras)»«
+	ENDIF»'''
 	
 	def generateArgument(Argument a)
 	'''«IF a instanceof Variable»«generateVariable(a as Variable)»«
@@ -124,22 +164,20 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	
 	def generateExpr(Expr e)
-	'''
-	«IF e instanceof Data»«
-	generateData(e as Data)»
-	«ELSEIF e instanceof Aritmetica»«
+	'''«IF e instanceof Data»«
+	generateData(e as Data)»«
+	ELSEIF e instanceof Aritmetica»«
 	generateAritmetica(e as Aritmetica)»«
-	ELSEIF e instanceof Equal»
-	«generateEqual(e as Equal)»«
-	ELSEIF e instanceof FuncionSimplificada»
-	«generateFuncionSimplificada(e as FuncionSimplificada)»«
-	ELSEIF e instanceof Define»
-	«generateDefine(e as Define)»«
-	ELSEIF e instanceof List_Operation»
-	«generateList_Operation(e as List_Operation)»«
-	ELSEIF e instanceof LlamarFuncion»
-	«generateLlamarFuncion(e as LlamarFuncion)»«ENDIF»
-	'''
+	ELSEIF e instanceof Equal»«
+	generateEqual(e as Equal)»«
+	ELSEIF e instanceof FuncionSimplificada»«
+	generateFuncionSimplificada(e as FuncionSimplificada)»«
+	ELSEIF e instanceof Define»«
+	generateDefine(e as Define)»«
+	ELSEIF e instanceof List_Operation»«
+	generateList_Operation(e as List_Operation)»«
+	ELSEIF e instanceof LlamarFuncion»«
+	generateLlamarFuncion(e as LlamarFuncion)»«ENDIF»'''
 	
 	
 	def generateData(Data d) // TODO List
@@ -170,7 +208,7 @@ class CompilacionGenerator extends AbstractGenerator {
 	def generateAritmetica(Aritmetica a)
 	'''«var list= newLinkedList»«
 	FOR i : a.argument»«{list.add(generateArgument(i)); ''}»«ENDFOR»(«
-	list.join(generateAllOp(a.op as AllOp))»)'''
+	list.join(' '+generateAllOp(a.op as AllOp)+' ')»)'''
 	
 	def generateAllOp(AllOp ao)
 	'''«IF ao instanceof Operadores»«generateOperadores(ao as Operadores)»«
@@ -189,35 +227,41 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	
 	
-	def generateNativos(Nativos t)'''«t.nat» '''
+	def generateNativos(Nativos t)'''«t.nat»'''
 	
-	def generateVec(Vec vec)'''vector<«FOR index: vec.inside»«IF index instanceof Vec»«generateVec(index as Vec)»«
-	ELSEIF index instanceof Nativos»«generateNativos(index as Nativos)»«ENDIF»«ENDFOR»
-	>'''
+	def generateVec(Vec vec)'''vector<«
+	FOR index: vec.inside»«
+	IF index instanceof Vec»«generateVec(index as Vec)»«
+	ELSEIF index instanceof Nativos»«generateNativos(index as Nativos)»«
+	ENDIF»«
+	ENDFOR»>'''
 	
 
 	def generateDefine(Define d)
-	'''«generateType(d.basta)»«d.name»«
-	IF d.parameter instanceof List»«»«ELSE»=«ENDIF»«generateArgument(d.parameter as Argument)»;'''
+	'''«generateType(d.basta)» «d.name»«
+	IF d.parameter instanceof List»«»«ELSE» = «ENDIF»«generateArgument(d.parameter as Argument)»;'''
 	
-	def generateEqual(Equal e)'''«e.data1»==«e.data2»'''
+	def generateEqual(Equal e)'''(«e.data1»==«e.data2»)'''
 	
 	def generateList_Operation(List_Operation lco)//TODO operaciones con listas
 	
-	'''«IF lco.op == 'length'»«lco.li».size()«
-	ELSEIF lco.op == 'car'»head(«lco.li»)«
-	ELSEIF lco.op == 'cdr'»tail(«lco.li»)«
-	ELSEIF lco.op == 'concat'»concat(«lco.firstl»,«lco.secondl»)«ENDIF»'''
+	'''«IF lco.op == 'length'»«generateSimple(lco.li)».size()«
+	ELSEIF lco.op == 'car'»head(«generateSimple(lco.li)»)«
+	ELSEIF lco.op == 'cdr'»tail(«generateSimple(lco.li)»)«
+	ELSEIF lco.op == 'concat'»concat(«generateNoQuiereValidar(lco.firstl)»,«
+	generateNoQuiereValidar(lco.secondl)»)«ENDIF»'''
 	
-	def generateFuncionSimplificada(FuncionSimplificada f)//TODO funciones
-	'''«generateType(f.typeOfFunction)» «f.name» («var param= newLinkedList()»«
-	FOR e: f.parameter»«{param.add(generateArgument(e)); ""}»«ENDFOR»«param.join(',')»){
-		«FOR i: f.then»«generateBloque(i)»«ENDFOR»return «generateArgument(f.returnf as Argument)»;
-	}'''
+	def generateNoQuiereValidar(NoQuiereValidar nqv)'''«IF nqv instanceof List»«
+	generateList(nqv as List)»«
+	ELSEIF nqv instanceof Variable»«generateVariable(nqv as Variable)»«ENDIF»'''
+	
+	
+	
+	def generateReturnF(ReturnF rf)'''«generateSimple(rf as Simple)»'''
 	
 	def generateLlamarFuncion(LlamarFuncion lf)//TODO llamar Funcion
-	'''«lf.nombreFuncion»(«var param= newLinkedList()»«
-	FOR i: lf.arguments»«param.add(generateArgument(i))»«ENDFOR»«
+	'''«lf.nombreFuncion.name»(«var param= newLinkedList()»«
+	FOR i: lf.arguments»«{param.add(generateArgument(i)); ""}»«ENDFOR»«
 	param.join(",")»)'''
 	
 	
@@ -228,8 +272,18 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	
 	def generateIf(If i)
-	'''if(«generateCondicionIF(i.condition)»){«FOR w: i.then»«generateBloque(w as Bloque)»«ENDFOR»}else{«FOR w: i.eelse»«generateBloque(w as Bloque)»«ENDFOR»}'''
-	//«for(a: i.then) generateBloque(a)»}else{«for (e: i.eelse) generateBloque(e)»
+	'''if(«generateCondicionIF(i.condition)»){
+		«
+	FOR w: i.then»«generateBloque(w as Bloque)»«
+	ENDFOR»}else{
+		«
+	FOR w: i.eelse»«
+	generateBloque(w as Bloque)»«
+	ENDFOR»}
+	
+	'''
+	
+	
 	def generateCondicionIF(CondicionIF ci)
 	'''«IF ci instanceof Equal»«generateEqual(ci as Equal)»«
 	ELSEIF ci instanceof Aritmetica»«generateAritmetica(ci as Aritmetica)»«
@@ -247,16 +301,11 @@ class CompilacionGenerator extends AbstractGenerator {
 	def generateBool(Bool b)'''«b.value»'''
 	
 	def generateList(List l)
-	'''{«var newList = newLinkedList()»«
+	''' {«var newList = newLinkedList()»«
 	FOR i: l.datal»«{newList.add(generateListContent(i)); ""}»«ENDFOR»«
-	newList.join(',')»}'''
+	newList.join(' , ')»}'''
 	
 	def generateListContent(ListContent lc)
 	'''«IF lc instanceof Data»«generateData(lc as Data)»«
 	ELSEIF lc instanceof Variable»«generateVariable(lc as Variable)»«ENDIF»'''
-	////[«val newlist = newLinkedList(l)»
-		//«var nl = newLinkedList()»«FOR i: l.data»«{if (i instanceof Data) nl.add( i) else nl.add(generateVariable(i as Variable)); ""}»«ENDFOR»«nl.join(',')»'''
-	
-	//	«newlist.join(',')»]
-	///«FOR i: l.typeOfList»«{newlist.add(generateValue(i)); ""}»«ENDFOR»
 	}
