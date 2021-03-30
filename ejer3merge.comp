@@ -1,0 +1,46 @@
+Programa ewe
+
+(define (bool isEmpty l list[int] )
+	(
+		define( vacio bool (==   (length l list[ int] ) 0)	)
+	) 
+	end vacio bool
+) 
+
+(define (list[int] merge L list[int] M list[int]) 
+	(
+		define(ret list[int] (list 6 ))
+		
+		(if ((isEmpty L list[int])) 
+			( ret M list[int] )  
+			else (
+				( if((isEmpty M list[int]))
+					(ret L list[int])
+					else (
+						(if ( (< (car L list[int]) (car M list[int]) ) )
+							( ret (list (car L list[int]) (merge (list (cdr L list[int])) M list[int] ) )) 
+							else  (
+								ret (list (car M list[int]) (merge (cdr M list[int]) L list[int])) 
+							)
+						)	
+					)	
+				) 
+			)	
+		) 
+	) 
+	end ret list[int]
+)
+
+(define (reverseInner l list[int] acc list[int])
+	( define(ans list[int] (list 0))
+		(if((isEmpty l list[int]))
+			(ans acc list[int])
+			else(
+				ans (reverseInner (cdr l list[int]) (list (car l list[int]) acc list[int]))
+			)
+			
+			
+		)
+	)
+	end ans list[int]
+)
