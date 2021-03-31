@@ -111,7 +111,7 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 	}
 	
 	@Check
-	public void checkDataSueltaBloque(Bloque bloq, If fi) {
+	public void checkDataSueltaBloque(If fi) {
 		//for (Bloque variable: iiif.getThen() ){
 		for (Bloque variable: fi.getThen() ){
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
@@ -121,21 +121,21 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 						F);
 			}
 		}
-	}
+	
 			 		
-		//}
-//		if(iiif.getEelse().size() > 0) {
-//		for (Bloque variable: iiif.getEelse() ){
-//			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
-//					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
-//					variable.getClass().getSimpleName().equals("VariableImpl")) {
-//				warning("not only cons", CompilacionPackage.Literals.IF__EELSE,
-//						F);
-//			}
-//		}
-//		}
 		
-//	}
+		if(fi.getEelse().size() > 0) {
+		for (Bloque variable: fi.getEelse() ){
+			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
+					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
+					variable.getClass().getSimpleName().equals("VariableImpl")) {
+				warning("not only cons", CompilacionPackage.Literals.IF__EELSE,
+						F);
+			}
+		}
+		}
+		
+	}
 
 
 
