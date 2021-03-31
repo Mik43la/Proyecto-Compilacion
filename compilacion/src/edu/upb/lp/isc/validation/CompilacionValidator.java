@@ -108,8 +108,8 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")  ) {
-				error("not only cons", CompilacionPackage.Literals.DECLARACIONES,
-						F);
+				error("not only cons", CompilacionPackage.Literals.PROGRAMA__DECLARACIONES,
+						INVALID_NAME);
 			}
 		}
 	}
@@ -121,8 +121,8 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")) {
-				error("not only cons", CompilacionPackage.Literals.DECLARACIONES,
-						F);
+				error("not only cons", CompilacionPackage.Literals.IF__THEN,
+						INVALID_NAME);
 			}
 		}
 	
