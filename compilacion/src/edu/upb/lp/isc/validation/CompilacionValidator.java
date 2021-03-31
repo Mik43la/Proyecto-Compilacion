@@ -57,7 +57,7 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 				error("expt, quotient y remainder son (op Int Int)"+ aritmetica.getArgument().get(0).getClass().getSimpleName(), CompilacionPackage.Literals.ARITMETICA__ARGUMENT,
 						INVALID_NAME);
 			}else if (!(aritmetica.getArgument().get(1).getClass().getSimpleName().equals("MyIntImpl") || aritmetica.getArgument().get(1).getClass().getSimpleName().equals("AritmeticaImpl" )
-					|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("VariableImpl" )
+					|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("VariableImpl" )|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("LlamarFuncionImpl")
 					)) {//|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("VariableImpl")
 				error("expt, quotient y remainder son (op Int Int)"+ aritmetica.getArgument().get(1).getClass().getSimpleName(), CompilacionPackage.Literals.ARITMETICA__ARGUMENT,
 						INVALID_NAME);
