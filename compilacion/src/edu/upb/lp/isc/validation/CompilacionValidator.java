@@ -4,16 +4,22 @@
 package edu.upb.lp.isc.validation;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 
 import edu.upb.lp.isc.compilacion.Argument;
 import edu.upb.lp.isc.compilacion.Aritmetica;
+import edu.upb.lp.isc.compilacion.Bloque;
 import edu.upb.lp.isc.compilacion.CompilacionPackage;
+import edu.upb.lp.isc.compilacion.Declaraciones;
 import edu.upb.lp.isc.compilacion.FuncionSimplificada;
+import edu.upb.lp.isc.compilacion.If;
 import edu.upb.lp.isc.compilacion.List;
 import edu.upb.lp.isc.compilacion.ListContent;
 import edu.upb.lp.isc.compilacion.LlamarFuncion;
 import edu.upb.lp.isc.compilacion.MyInt;
+import edu.upb.lp.isc.compilacion.Programa;
+import edu.upb.lp.isc.compilacion.Simple;
 import edu.upb.lp.isc.compilacion.Variable;
 
 /**
@@ -36,20 +42,29 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 //	}
 
 	public static final String INVALID_NAME = "mal";
+	public static final EStructuralFeature F = null;
+
 
 //.matches("[0-9]*"
 	@Check
 	public void checkAritmeticaDosIntsEQR(Aritmetica aritmetica) {
-		if (aritmetica.getOp().getOp().equals("expt") || aritmetica.getOp().getOp().equals("remainder") 
-				|| aritmetica.getOp().getOp().equals("quotient")) {
-			if (!(aritmetica.getArgument().get(0).getClass().getSimpleName().equals("MyIntImpl")) || 
-					!(aritmetica.getArgument().get(1).getClass().getSimpleName().equals("MyIntImpl"))) {
-				error("expt, quotient y remainder son (op Int Int)", CompilacionPackage.Literals.ARITMETICA__ARGUMENT,
+		if ( aritmetica.getOp().getOp().equals("expt")
+				|| aritmetica.getOp().getOp().equals("remainder") || aritmetica.getOp().getOp().equals("quotient") 
+				|| aritmetica.getOp().getOp().equals("+") || aritmetica.getOp().getOp().equals("-")
+				|| aritmetica.getOp().getOp().equals("*") || aritmetica.getOp().getOp().equals("/") ) {
+			if (!(aritmetica.getArgument().get(0).getClass().getSimpleName().equals("MyIntImpl") || aritmetica.getArgument().get(0).getClass().getSimpleName().equals("AritmeticaImpl")
+					|| aritmetica.getArgument().get(0).getClass().getSimpleName().equals("VariableImpl") || aritmetica.getArgument().get(0).getClass().getSimpleName().equals("LlamarFuncionImpl"))) {
+				error("expt, quotient y remainder son (op Int Int)"+ aritmetica.getArgument().get(0).getClass().getSimpleName(), CompilacionPackage.Literals.ARITMETICA__ARGUMENT,
+						INVALID_NAME);
+			}else if (!(aritmetica.getArgument().get(1).getClass().getSimpleName().equals("MyIntImpl") || aritmetica.getArgument().get(1).getClass().getSimpleName().equals("AritmeticaImpl" )
+					|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("VariableImpl" )
+					)) {//|| aritmetica.getArgument().get(1).getClass().getSimpleName().equals("VariableImpl")
+				error("expt, quotient y remainder son (op Int Int)"+ aritmetica.getArgument().get(1).getClass().getSimpleName(), CompilacionPackage.Literals.ARITMETICA__ARGUMENT,
 						INVALID_NAME);
 			}
 		}
 	}
-	
+	//AritmeticaImpl
 	@Check
 	public void checkListaAny(List lista) {
 		for (ListContent variable: lista.getDatal()) {
@@ -82,15 +97,47 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			}
 		}
 	}
-//	public void checkLenght(LlamarFuncion llamFun, FuncionSimplificada funSimp) { //{'<' | '>=' | '>' | '<=' | '!='
-//		if (llamFun.getNombreFuncion().toString().equals(funSimp.getName().toString())){
-//				//	|| aritmetica.getOp().toString() == "remainder") {
-//			if (llamFun.getArguments().size() != funSimp.getParameter().size()) {
-//				error("Cantidad de atributos incorrecta", CompilacionPackage.Literals.LLAMAR_FUNCION__ARGUMENTS,
-//						INVALID_NAME);
+	
+	@Check
+	public void checkDataSuelta(Programa prog) {
+		for (Declaraciones variable: prog.getDeclaraciones() ){
+			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
+					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
+					variable.getClass().getSimpleName().equals("VariableImpl")  ) {
+				warning("not only cons", CompilacionPackage.Literals.DECLARACIONES,
+						F);
+			}
+		}
+	}
+	
+	@Check
+	public void checkDataSueltaBloque(Bloque bloq, If fi) {
+		//for (Bloque variable: iiif.getThen() ){
+		for (Bloque variable: fi.getThen() ){
+			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
+					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
+					variable.getClass().getSimpleName().equals("VariableImpl")) {
+				warning("not only cons", CompilacionPackage.Literals.DECLARACIONES,
+						F);
+			}
+		}
+	}
+			 		
+		//}
+//		if(iiif.getEelse().size() > 0) {
+//		for (Bloque variable: iiif.getEelse() ){
+//			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
+//					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
+//					variable.getClass().getSimpleName().equals("VariableImpl")) {
+//				warning("not only cons", CompilacionPackage.Literals.IF__EELSE,
+//						F);
 //			}
 //		}
+//		}
+		
 //	}
+
+
 
 
 //TODO lo de aritmetica check
