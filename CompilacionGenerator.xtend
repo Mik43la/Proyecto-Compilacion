@@ -292,9 +292,9 @@ vector<T> printlist(vector<T> list){
 	
 	if(«generateCondicionIF(i.condition)»){
 		«FOR w: i.then»«generateBloque(w as Bloque)»«ENDFOR»
-	}else{
+	}«IF !i.eelse.isEmpty»else{
 		«FOR w: i.eelse»«generateBloque(w as Bloque)»«ENDFOR»
-	}
+	}«ENDIF»
 	
 	'''
 	
