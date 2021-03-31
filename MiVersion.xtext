@@ -1,0 +1,142 @@
+grammar edu.upb.lp.isc.MiVersion with org.eclipse.xtext.common.Terminals
+
+generate miVersion "http://www.upb.edu/lp/isc/MiVersion"
+
+Programa: 
+ 	'Programa' name = ID 
+ 	(funciones+= FuncionSimplificada)*
+	(declaraciones += Declaraciones)*
+	(llamados += Llamados)*
+	(ejecuciones += Ejecucion)*
+;
+Llamados:
+	'run' Expr
+;
+
+Ejecucion:
+	'> ' Expr
+;
+
+Declaraciones:
+	Simple 
+;
+
+Simple:
+	Estructuras | Argument
+;
+
+Expr:
+	( Data | Aritmetica 
+		| Define
+		| List_Operation 
+		| LlamarFuncion 
+		| ReDefine
+	)
+;
+
+Data:
+	 ( MyInt | MyString | Bool | List )
+;
+MyInt:
+	value = INT
+;
+MyString:
+	value = STRING
+;
+
+Aritmetica:
+	'('op = (AllOp) argument+=(Argument) argument+=(Argument)+')'
+;
+AllOp:
+	Operadores|Boolean_Op
+;
+//TODO como hacer funciones
+//TODO no se puede imprimir dentro de ifs
+Operadores://TODO  ==
+	op = ( '=='| '+' | '-' | '*' | '/' | 'expt' | 'quotient' | 'remainder')
+;
+
+
+Boolean_Op: 
+	op = ( '<' | '>=' | '>' | '<=' | '!=' )
+;
+
+Bool:
+	value = ( 'true' | 'false')
+;
+
+Estructuras:
+	 If   
+;	
+
+
+List:
+	 {List}	'(''list' (datal+=(ListContent))*')' 
+	
+;
+ListContent:
+	Data | Variable | List_Operation | LlamarFuncion
+;
+List_Operation:
+	'(' (op = ('length'|'car'|'cdr'|'printlist')  li = NoQuiereValidar ) ')'
+	|'('(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
+;
+
+NoQuiereValidar:
+	List|Variable|LlamarFuncion|List_Operation
+;
+ReturnF:
+	'end' Simple?
+;
+Variable:
+( name=ID typeVar=Type? )  
+;
+FuncionSimplificada: 
+	'(' 'define' '(' nameAndType=Variable (parameter+=Argument)*')' 
+		('(' (then+=Bloque)+')')? returnf=ReturnF
+		')'
+;
+Define:
+	'define' '('(nameAndType=Variable parameter=Argument) ')' 
+;
+
+ReDefine:
+	nombreVar=ID '=' parameter=Argument
+;
+Type:
+	 ( Nativos | Vec )
+;
+
+Nativos:
+  nat = ('int' | 'string'| 'bool' | 'void');
+
+Vec:
+	 'list[' inside+=(Nativos|Vec)+  ']'
+;
+
+LlamarFuncion: 
+	'(' nombreFuncion = [Variable] arguments+=(Argument)* ')'
+;
+
+
+
+If:
+	'(' 
+		'if' '(' condition = ( CondicionIF)')'	
+		'(' (then+= Bloque)+ ')'
+		 ( 'else' '('(eelse+= Bloque)+ ')' )?
+		
+	')'
+;
+CondicionIF:
+	Aritmetica|LlamarFuncion
+;
+
+Bloque:
+	Simple 
+;
+
+Argument:
+	Variable|Expr
+;
+	
