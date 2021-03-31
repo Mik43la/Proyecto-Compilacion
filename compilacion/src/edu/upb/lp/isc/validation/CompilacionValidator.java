@@ -152,6 +152,21 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 		}
 		}
 	}
+	
+//	@Check
+//	public void checkAtributisFun(LlamarFuncion llam, FuncionSimplificada notFun) {
+//		//for (Bloque variable: iiif.getThen() ){
+//		int aux = 0;
+//		for (Argument variable: notFun.getParameter()) {
+//			if(variable.getClass().getSimpleName().equals(llam.getArguments().get(aux).getClass().getSimpleName()))
+//		error("not only cons", CompilacionPackage.Literals.LLAMAR_FUNCION__NOMBRE_FUNCION,
+//					INVALID_NAME);
+//			
+//		}
+//		
+//
+//	}
+	
 
 
 
