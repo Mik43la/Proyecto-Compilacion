@@ -67,11 +67,15 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 	//AritmeticaImpl
 	@Check
 	public void checkListaAny(List lista) {
+		for (ListContent nose: lista.getDatal()) {
+			if(!(nose.getClass().getSimpleName().equals("VariableImpl") || nose.getClass().getSimpleName().equals("LlamarFuncionImpl"))) {
 		for (ListContent variable: lista.getDatal()) {
 			String auxi=lista.getDatal().get(0).getClass().getSimpleName();
 			if (!(variable.getClass().getSimpleName().equals(auxi))) {
 				error("no (List Any)", CompilacionPackage.Literals.LIST__DATAL,
 						INVALID_NAME);
+			}
+		}
 			}
 		}
 	}
