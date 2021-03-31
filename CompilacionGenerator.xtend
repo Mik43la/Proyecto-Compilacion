@@ -14,7 +14,6 @@ import edu.upb.lp.isc.compilacion.Data
 import edu.upb.lp.isc.compilacion.Declaraciones
 import edu.upb.lp.isc.compilacion.Define
 import edu.upb.lp.isc.compilacion.Ejecucion
-import edu.upb.lp.isc.compilacion.Equal
 import edu.upb.lp.isc.compilacion.Estructuras
 import edu.upb.lp.isc.compilacion.Expr
 import edu.upb.lp.isc.compilacion.FuncionSimplificada
@@ -22,6 +21,7 @@ import edu.upb.lp.isc.compilacion.If
 import edu.upb.lp.isc.compilacion.List
 import edu.upb.lp.isc.compilacion.ListContent
 import edu.upb.lp.isc.compilacion.List_Operation
+import edu.upb.lp.isc.compilacion.Llamados
 import edu.upb.lp.isc.compilacion.LlamarFuncion
 import edu.upb.lp.isc.compilacion.MyInt
 import edu.upb.lp.isc.compilacion.MyString
@@ -29,6 +29,7 @@ import edu.upb.lp.isc.compilacion.Nativos
 import edu.upb.lp.isc.compilacion.NoQuiereValidar
 import edu.upb.lp.isc.compilacion.Operadores
 import edu.upb.lp.isc.compilacion.Programa
+import edu.upb.lp.isc.compilacion.ReDefine
 import edu.upb.lp.isc.compilacion.ReturnF
 import edu.upb.lp.isc.compilacion.Simple
 import edu.upb.lp.isc.compilacion.Type
@@ -73,6 +74,10 @@ class CompilacionGenerator extends AbstractGenerator {
 	
 	«ENDFOR»
 	
+	«FOR ll: a.llamados»    «generateLlamados(ll)»
+		
+	«ENDFOR»
+	
 	«FOR e: a.ejecuciones»    «generateEjecucion(e)»
 	
 	«ENDFOR»
@@ -98,11 +103,18 @@ T head(vector<T> l){
 }
 
 template <typename T>
-vector<T> concat(vector<T>& first, vector<T>& second){
+vector<T> concat(vector<T> first, vector<T> second){
 	for(T i : second){
 		first.push_back(i);
 	}
 	return first;
+}
+
+template<typename T>
+vector<T> printlist(vector<T> list){
+	for(T i: list){
+		cout<<i<<" ";
+	}
 }
 '''
 		 
@@ -136,7 +148,8 @@ vector<T> concat(vector<T>& first, vector<T>& second){
 	«FOR i: f.then»    «generateBloque(i)»«ENDFOR»
 	 */
 	
-	
+	def generateLlamados(Llamados ll)'''«IF ll instanceof Expr»«generateExpr(ll as Expr)»«ENDIF»;
+	 '''
 	def generateEjecucion(Ejecucion e) 
 	'''«IF e instanceof Expr» cout<<«generateExpr(e as Expr)»<<endl;«ENDIF»
 	'''
@@ -168,16 +181,16 @@ vector<T> concat(vector<T>& first, vector<T>& second){
 	generateData(e as Data)»«
 	ELSEIF e instanceof Aritmetica»«
 	generateAritmetica(e as Aritmetica)»«
-	ELSEIF e instanceof Equal»«
-	generateEqual(e as Equal)»«
-	ELSEIF e instanceof FuncionSimplificada»«
+	ELSEIF e instanceof FuncionSimplificada»«//TODO EESOT NO DEBERIA
 	generateFuncionSimplificada(e as FuncionSimplificada)»«
 	ELSEIF e instanceof Define»«
 	generateDefine(e as Define)»«
 	ELSEIF e instanceof List_Operation»«
 	generateList_Operation(e as List_Operation)»«
 	ELSEIF e instanceof LlamarFuncion»«
-	generateLlamarFuncion(e as LlamarFuncion)»«ENDIF»'''
+	generateLlamarFuncion(e as LlamarFuncion)»«
+	ELSEIF e instanceof ReDefine»«
+	generateReDefine(e as ReDefine)»«ENDIF»'''
 	
 	
 	def generateData(Data d) // TODO List
@@ -235,25 +248,27 @@ vector<T> concat(vector<T>& first, vector<T>& second){
 	ELSEIF index instanceof Nativos»«generateNativos(index as Nativos)»«
 	ENDIF»«
 	ENDFOR»>'''
-	
+	def generateReDefine(ReDefine rd)'''«rd.name» = «generateArgument(rd.parameter as Argument)»;'''
 
-	def generateDefine(Define d)
-	'''«generateType(d.basta)» «d.name»«
+	def generateDefine(Define d)//TODO
+	'''«generateType(d.basta as Type)» «d.name»«
 	IF d.parameter instanceof List»«»«ELSE» = «ENDIF»«generateArgument(d.parameter as Argument)»;'''
 	
-	def generateEqual(Equal e)'''(«e.data1»==«e.data2»)'''
 	
 	def generateList_Operation(List_Operation lco)//TODO operaciones con listas
 	
-	'''«IF lco.op == 'length'»«generateSimple(lco.li)».size()«
-	ELSEIF lco.op == 'car'»head(«generateSimple(lco.li)»)«
-	ELSEIF lco.op == 'cdr'»tail(«generateSimple(lco.li)»)«
+	'''«IF lco.op == 'length'»«generateNoQuiereValidar(lco.li)».size()«
+	ELSEIF lco.op == 'car'»head(«generateNoQuiereValidar(lco.li)»)«
+	ELSEIF lco.op == 'cdr'»tail(«generateNoQuiereValidar(lco.li)»)«
+	ELSEIF lco.op == 'printlist'»printlist(«generateNoQuiereValidar(lco.li)»)«
 	ELSEIF lco.op == 'concat'»concat(«generateNoQuiereValidar(lco.firstl)»,«
 	generateNoQuiereValidar(lco.secondl)»)«ENDIF»'''
 	
-	def generateNoQuiereValidar(NoQuiereValidar nqv)'''«IF nqv instanceof List»«
-	generateList(nqv as List)»«
-	ELSEIF nqv instanceof Variable»«generateVariable(nqv as Variable)»«ENDIF»'''
+	def generateNoQuiereValidar(NoQuiereValidar nqv)
+	'''«IF nqv instanceof List»«generateList(nqv as List)»«
+	ELSEIF nqv instanceof Variable»«generateVariable(nqv as Variable)»«
+	ELSEIF nqv instanceof LlamarFuncion»«generateLlamarFuncion(nqv as LlamarFuncion)»«
+	ELSEIF nqv instanceof List_Operation»«generateList_Operation(nqv as List_Operation)»«ENDIF»'''
 	
 	
 	
@@ -285,8 +300,7 @@ vector<T> concat(vector<T>& first, vector<T>& second){
 	
 	
 	def generateCondicionIF(CondicionIF ci)
-	'''«IF ci instanceof Equal»«generateEqual(ci as Equal)»«
-	ELSEIF ci instanceof Aritmetica»«generateAritmetica(ci as Aritmetica)»«
+	'''«IF ci instanceof Aritmetica»«generateAritmetica(ci as Aritmetica)»«
 	ELSEIF ci instanceof LlamarFuncion»«generateLlamarFuncion(ci as LlamarFuncion)»«ENDIF»'''
 	
 	
@@ -307,5 +321,7 @@ vector<T> concat(vector<T>& first, vector<T>& second){
 	
 	def generateListContent(ListContent lc)
 	'''«IF lc instanceof Data»«generateData(lc as Data)»«
-	ELSEIF lc instanceof Variable»«generateVariable(lc as Variable)»«ENDIF»'''
+	ELSEIF lc instanceof Variable»«generateVariable(lc as Variable)»«
+	ELSEIF lc instanceof List_Operation»«generateList_Operation(lc as List_Operation)»«
+	ELSEIF lc instanceof LlamarFuncion»«generateLlamarFuncion(lc as LlamarFuncion)»«ENDIF»'''
 	}

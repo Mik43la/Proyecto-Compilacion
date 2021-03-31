@@ -6,21 +6,52 @@ Programa ewe
 	) 
 	end vacio bool
 ) 
+(define (list[int] reverseInner l list[int] acc list[int])
+	( define(ans list[int] (list ))
+		(if((isEmpty l list[int]))
+			(ans = acc list[int])
+			else(
+				ans = (reverseInner (cdr l list[int]) (concat (list(car l list[int])) acc list[int]))
+			)
+		)
+	)  
+	end ans list[int]
+)
+(define (list[int] reverse l list[int])
+	(define(reversed list[int] (reverseInner l list[int] (list ))))
+	end reversed list[int]
+)
+(define (list[list[int]] splitInner l1 list[int] l2 list[int])
+	( define(ans list[list[int]] (list (list ) ))
+		(if((<= (length l1 list[int]) (length l2 list[int])))
+			(ans=(list (reverse l2 list[int]) l1 list[int]))
+			else(
+				ans= (splitInner (cdr l1 list[int]) (concat (list(car l1 list[int])	) l2 list[int]))
+			)
+		)
+	)
+	end ans list[list[int]]
+)
 
+(define(list[list[int]] split l list[int])
+	(define( splitted list[list[int]] (splitInner l list[int] (list ) )  )
+		
+	) end  splitted list[list[int]]
+)
 (define (list[int] merge L list[int] M list[int]) 
 	(
-		define(ret list[int] (list 6 ))
+		define(ret list[int] (list ))
 		
 		(if ((isEmpty L list[int])) 
-			( ret M list[int] )  
+			( ret = M list[int] )  
 			else (
-				( if((isEmpty M list[int]))
-					(ret L list[int])
+				( if((isEmpty M list[int]))     
+					(ret = L list[int]) 
 					else (
 						(if ( (< (car L list[int]) (car M list[int]) ) )
-							( ret (list (car L list[int]) (merge (list (cdr L list[int])) M list[int] ) )) 
+							( ret = (concat (list(car L list[int])) (merge  (cdr L list[int]) M list[int] ) )) 
 							else  (
-								ret (list (car M list[int]) (merge (cdr M list[int]) L list[int])) 
+								ret  = (concat (list(car M list[int])) (merge (cdr M list[int]) L list[int])) 
 							)
 						)	
 					)	
@@ -31,16 +62,22 @@ Programa ewe
 	end ret list[int]
 )
 
-(define (reverseInner l list[int] acc list[int])
-	( define(ans list[int] (list 0))
-		(if((isEmpty l list[int]))
-			(ans acc list[int])
+
+
+(define(list[int] mergeSort l list[int])
+	( define(ans list[int] (list ))
+		(if ((< (length l list[int]) 2))
+			( ans = l list[int])
 			else(
-				ans (reverseInner (cdr l list[int]) (list (car l list[int]) acc list[int]))
+				ans =(merge
+				(mergeSort (car (split l list[int])))
+				(mergeSort (car (cdr (split l list[int]))))
+				)
+				) 
 			)
-			
-			
 		)
-	)
 	end ans list[int]
 )
+define(arr list[int] (list 3 4 4 5 5 1 2))
+define(answer list[int](mergeSort arr list[int]))
+run (printlist answer list[int])

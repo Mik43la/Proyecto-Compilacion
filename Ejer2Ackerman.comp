@@ -1,16 +1,16 @@
-Programa ackerman
+Programa ackerman    
  
 	(define ( int ackerman m int n int)	
 		(define(res int 0)
 			(if ((== m int 0)) 
-			 ( res (+ n int 1))  
+			 ( res = (+ n int 1))  
 		else ( 
 			  (if ((== n int 0))
-				  (	res (ackerman (- m int 1) 1)	)
+				  (	res= (ackerman (- m int 1) 1)	)
 			  else (
-				   res	(ackerman (- m int 1) (ackerman m int (- n int 1) )	)
+				   res=(ackerman (- m int 1) (ackerman m int (- n int 1) )	)
 				   					
-					)
+					) 
 				)		
 		)	  
 		  

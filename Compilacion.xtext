@@ -6,7 +6,11 @@ Programa:
  	'Programa' name = ID 
  	(funciones+= FuncionSimplificada)*
 	(declaraciones += Declaraciones)*
+	(llamados += Llamados)*
 	(ejecuciones += Ejecucion)*
+;
+Llamados:
+	'run' Expr
 ;
 
 Ejecucion:
@@ -22,10 +26,11 @@ Simple:
 ;
 
 Expr:
-	( Data | Aritmetica | Equal  
+	( Data | Aritmetica 
 		| Define
 		| List_Operation 
 		| LlamarFuncion 
+		| ReDefine
 	)
 ;
 
@@ -68,38 +73,42 @@ Estructuras:
 
 
 List:
-	 {List}	'(''list' (datal+=(ListContent))+')' 
+	 {List}	'(''list' (datal+=(ListContent))*')' 
 	
 ;
 ListContent:
-	Data | Variable
+	Data | Variable | List_Operation | LlamarFuncion
 ;
 List_Operation:
-	'(' (op = ('length'|'car'|'cdr')  li = Simple ) ')'
+	'(' (op = ('length'|'car'|'cdr'|'printlist')  li = NoQuiereValidar ) ')'
 	|'('(op='concat' firstl= NoQuiereValidar secondl= NoQuiereValidar)')'//TODO
 ;
 
 NoQuiereValidar:
-	List|Variable
+	List|Variable|LlamarFuncion|List_Operation
 ;
 ReturnF:
-	'end' Simple
+	'end' Simple?
 ;
 
 FuncionSimplificada: 
 	'(' 'define' '(' typeOfFunction=Type name=ID (parameter+=Argument)*')' 
-		'(' (then+=Bloque)+')' returnf=ReturnF
+		('(' (then+=Bloque)+')')? returnf=ReturnF
 		')'
 ;
 Define:
-	'define' '('(name=ID basta=Type parameter=Argument) ')' | name=ID parameter=Argument
+	'define' '('(name=ID basta=Type parameter=Argument) ')' 
+;
+
+ReDefine:
+	name=ID '=' parameter=Argument
 ;
 Type:
 	 ( Nativos | Vec )
 ;
 
 Nativos:
-  nat = ('int' | 'string'| 'bool');
+  nat = ('int' | 'string'| 'bool' | 'void');
 
 Vec:
 	 'list[' inside+=(Nativos|Vec)+  ']'
@@ -109,9 +118,7 @@ LlamarFuncion:
 	'(' nombreFuncion = [FuncionSimplificada] arguments+=(Argument)* ')'
 ;
 
-Equal:
-	'(' ('equal?' | 'eq?') data1=Argument data2=Argument ')'
-;
+
 
 If:
 	'(' 
@@ -122,7 +129,7 @@ If:
 	')'
 ;
 CondicionIF:
-	Equal|Aritmetica|LlamarFuncion
+	Aritmetica|LlamarFuncion
 ;
 
 Bloque:
