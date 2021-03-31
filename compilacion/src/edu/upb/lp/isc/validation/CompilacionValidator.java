@@ -104,7 +104,7 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")  ) {
-				warning("not only cons", CompilacionPackage.Literals.DECLARACIONES,
+				error("not only cons", CompilacionPackage.Literals.DECLARACIONES,
 						F);
 			}
 		}
@@ -117,7 +117,7 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")) {
-				warning("not only cons", CompilacionPackage.Literals.DECLARACIONES,
+				error("not only cons", CompilacionPackage.Literals.DECLARACIONES,
 						F);
 			}
 		}
@@ -129,8 +129,8 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")) {
-				warning("not only cons", CompilacionPackage.Literals.IF__EELSE,
-						F);
+				error("not only cons", CompilacionPackage.Literals.IF__EELSE,
+						INVALID_NAME);
 			}
 		}
 		}
@@ -146,12 +146,11 @@ public class CompilacionValidator extends AbstractCompilacionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")) {
-				warning("not only cons", CompilacionPackage.Literals.FUNCION_SIMPLIFICADA__THEN,
-						F);
+				error("not only cons", CompilacionPackage.Literals.FUNCION_SIMPLIFICADA__THEN,
+						INVALID_NAME);
 			}
 		}
 		}
-		
 	}
 
 
