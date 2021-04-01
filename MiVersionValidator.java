@@ -49,18 +49,28 @@ public class MiVersionValidator extends AbstractMiVersionValidator {
 	//AritmeticaImpl
 	@Check
 	public void checkListaAny(List lista) {
-		for (ListContent nose: lista.getDatal()) {
-			if(!(nose.getClass().getSimpleName().equals("VariableImpl") || nose.getClass().getSimpleName().equals("LlamarFuncionImpl"))) {
 		for (ListContent variable: lista.getDatal()) {
 			String auxi=lista.getDatal().get(0).getClass().getSimpleName();
-			if (!(variable.getClass().getSimpleName().equals(auxi))) {
-				error("no (List Any)", MiVersionPackage.Literals.LIST__DATAL,
+			for (ListContent help: lista.getDatal()) {
+
+			if(help.getClass().getSimpleName() != "VariableImpl" && auxi.equals("VariableImpl")){
+				 int deAuxi = 0;
+				 deAuxi++;
+				 auxi=lista.getDatal().get(deAuxi).getClass().getSimpleName();
+			}
+			}
+			
+			if (!(variable.getClass().getSimpleName().toString().equals("VariableImpl") || variable.getClass().getSimpleName().toString().equals("LlamarFuncionImpl")
+					|| variable.getClass().getSimpleName().equals(auxi)  )) {
+				error("no (List Any)" + lista.getDatal().get(0).getClass().getSimpleName(), MiVersionPackage.Literals.LIST__DATAL,
 						INVALID_NAME);
 			}
-		}
-			}
-		}
+		
+			
 	}
+	}
+	
+	
 //	@Check
 //	public void checkIncongrucion(Aritmetica aritmetica) {
 //		if (aritmetica.getOp().toString() == "/") {
@@ -90,8 +100,7 @@ public class MiVersionValidator extends AbstractMiVersionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")  ) {
-				error("not only cons", MiVersionPackage.Literals.DECLARACIONES,
-						F);
+				error("not only cons", MiVersionPackage.Literals.PROGRAMA__DECLARACIONES);
 			}
 		}
 	}
@@ -103,8 +112,7 @@ public class MiVersionValidator extends AbstractMiVersionValidator {
 			if (variable.getClass().getSimpleName().equals("MyIntImpl") || variable.getClass().getSimpleName().equals("MyStringImpl") ||
 					variable.getClass().getSimpleName().equals("ListImpl") || variable.getClass().getSimpleName().equals("BoolImpl")||
 					variable.getClass().getSimpleName().equals("VariableImpl")) {
-				error("not only cons", MiVersionPackage.Literals.DECLARACIONES,
-						F);
+				error("not only cons", MiVersionPackage.Literals.IF__THEN);
 			}
 		}
 	
