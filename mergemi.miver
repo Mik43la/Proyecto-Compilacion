@@ -1,0 +1,83 @@
+Programa merge
+
+(define ( isEmpty bool l list[int] )
+	(
+		define( vacio bool (==   (length l ) 0)	)
+	) 
+	end vacio 
+) 
+(define ( reverseInner list[int] l list[int] acc list[int])
+	( define(ans list[int] (list ))
+		(if((isEmpty l))
+			(ans = acc )
+			else(
+				ans = (reverseInner (cdr l) (concat (list(car l )) acc ))
+			)
+		)
+	)  
+	end ans 
+)
+(define ( reverse list[int] l  list[int])
+	(define(reversed list[int] (reverseInner l(list ))))
+	end reversed 
+)
+(define (splitInner list[list[int]] l1 list[int] l2 list[int])
+	( define(ans list[list[int]] (list (list ) ))
+		(if((<= (length l1 ) (length l2 )))
+			(ans=(list (reverse l2 ) l1 ))
+			else(
+				ans= (splitInner (cdr l1 ) (concat (list(car l1 )	) l2 ))
+			)
+		)
+	)
+	end ans 
+)
+
+(define(split list[list[int]] l list[int])
+	(define( splitted list[list[int]] (splitInner l(list ) )  )
+		
+	) end  splitted 
+)
+(define ( merge list[int] L list[int] M list[int]) 
+	(
+		define(ret list[int] (list ))
+		
+		(if ((isEmpty L)) 
+			( ret = M  )  
+			else (
+				( if((isEmpty M ))     
+					(ret = L ) 
+					else (
+						(if ( (< (car L ) (car M ) ) )
+							( ret = (concat (list(car L )) (merge  (cdr L ) M ) )) 
+							else  (
+								ret  = (concat (list(car M )) (merge (cdr M) L )) 
+							)
+						)	
+					)	
+				) 
+			)	
+		) 
+	) 
+	end ret 
+)
+
+
+
+(define( mergeSort list[int] l list[int])
+	( define(ans list[int] (list ))
+		(if ((< (length l ) 2))
+			( ans = l )
+			else(
+				ans =(merge
+				(mergeSort (car (split l )))
+				(mergeSort (car (cdr (split l ))))
+				)
+				) 
+			)
+		)
+	end ans 
+)
+define(arr list[int] (list 3 4 4 5 5 1 2))
+define(answer list[int](mergeSort arr ))
+run (printlist answer)

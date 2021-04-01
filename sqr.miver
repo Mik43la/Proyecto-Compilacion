@@ -1,0 +1,4 @@
+Programa sqrcubemi
+(define (sqr n int)(define(nsqr int (* n   n ))) end nsqr )      
+(define (cube n int)(define (ncube int (* n  (sqr n ) ) ) ) end ncube ) 
+> (cube 2)
