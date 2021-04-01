@@ -53,7 +53,7 @@ public class MiVersionValidator extends AbstractMiVersionValidator {
 			String auxi=lista.getDatal().get(0).getClass().getSimpleName();
 			for (ListContent help: lista.getDatal()) {
 
-			if(help.getClass().getSimpleName() != "VariableImpl" && auxi.equals("VariableImpl")){
+			if((help.getClass().getSimpleName() != "VariableImpl"|| help.getClass().getSimpleName() != "LlamarFuncionImpl") && (auxi.equals("VariableImpl")||auxi.equals("LlamarFuncionImpl"))){
 				 int deAuxi = 0;
 				 deAuxi++;
 				 auxi=lista.getDatal().get(deAuxi).getClass().getSimpleName();
